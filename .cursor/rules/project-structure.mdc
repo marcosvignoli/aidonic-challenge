@@ -1,0 +1,58 @@
+# Project Structure & Architecture
+
+## Monorepo Setup
+- **Turbo Repo**: Use `npx create-turbo@latest` for initialization
+- **Apps**: `apps/web/` (Next.js) and `apps/mobile/` (React Native CLI)
+- **Packages**: `packages/` for shared code (types, utilities, hooks)
+
+## Technology Stack
+- **Web**: Next.js with TypeScript
+- **Mobile**: React Native CLI (NOT Expo)
+- **Charts**: Recharts (cross-platform compatible)
+- **Styling**: Tailwind CSS (web) + React Native StyleSheet (mobile)
+- **State Management**: Zustand + React hooks
+- **Testing**: Jest + React Testing Library
+- **Mock API**: Inline mocks
+
+## Folder Structure ( Layer-Based)
+```
+src/
+├── containers/              # Business logic
+│   ├── DistributionList/
+│   │   ├── index.tsx
+│   │   ├── types.ts
+│   │   └── hooks.ts
+│   └── DistributionDetails/
+└── presentations/           # UI components
+    ├── DistributionList/
+    │   ├── index.tsx
+    │   ├── styles.ts
+    │   └── types.ts
+    └── DistributionDetails/
+```
+
+## Component Organization
+- **Folder-based components** with `index.tsx`
+- **Each folder contains** related files (types, styles, hooks)
+- **Container/Presentation pattern** is mandatory
+- **Shared containers** between web and mobile
+- **Platform-specific presentations** in respective apps
+
+## File Naming Conventions
+- **Components**: PascalCase (e.g., `DistributionList`)
+- **Files**: camelCase (e.g., `index.tsx`, `types.ts`)
+- **Folders**: camelCase for all folders (e.g., `distributionList`, `sharedTypes`)
+- **React Components**: PascalCase for component names and classes
+
+## Development Guidelines
+- **Senior level complexity**: Include performance, accessibility, error handling
+- **Cross-platform consistency**: Similar UX between web and mobile
+- **Mobile-first approach**: Design for mobile first, then adapt for web
+- **Code sharing**: Maximize shared code in packages
+- **TypeScript**: Strict mode enabled
+- **Testing**: Unit and integration tests for critical paths
+- **ES6+ best practices**: Use async/await for promises unless there's a solid reason not to
+description:
+globs:
+alwaysApply: false
+---

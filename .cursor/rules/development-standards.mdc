@@ -1,0 +1,52 @@
+# Development Standards
+
+## Code Quality
+- **SOLID principles**: Single responsibility, Open/closed, Liskov substitution, Interface segregation, Dependency inversion
+- **CLEAN Code**: Meaningful names, small functions, single responsibility, DRY principle
+- **TypeScript**: Strict mode, proper typing, no `any` types
+- **ESLint + Prettier**: Consistent code formatting
+
+## Container/Presentation Pattern
+- **Containers**: Handle business logic, data fetching, state management
+- **Presentations**: Pure UI components, no business logic
+- **Props**: Well-defined interfaces for component communication
+- **Separation**: Clear boundaries between logic and UI
+
+## State Management
+- **Zustand**: For global state management
+- **React hooks**: useState, useEffect, useCallback, useMemo for local state
+- **Async operations**: Use async/await for promises (ES6+ best practices)
+- **Loading states**: Proper loading states and error handling
+- **Optimization**: Memoization where appropriate
+
+## Testing Strategy
+- **Jest + React Testing Library**: For both web and mobile
+- **Unit tests**: Individual components and functions
+- **Integration tests**: API calls and state management
+- **Coverage**: Focus on critical business logic
+- **Mocking**: Inline mocks for API calls
+
+## Performance
+- **Lazy loading**: Code splitting for better performance
+- **Memoization**: React.memo, useMemo, useCallback
+- **Bundle optimization**: Tree shaking, dead code elimination
+- **Image optimization**: Proper sizing and formats
+
+## Accessibility
+- **Semantic HTML**: Proper heading structure, landmarks
+- **ARIA labels**: Screen reader support
+- **Keyboard navigation**: Tab order and focus management
+- **Color contrast**: WCAG (Web Content Accessibility Guidelines) compliance for proper color contrast ratios
+
+## Error Handling
+- **Error boundaries**: Catch and handle React errors
+- **Try-catch**: Proper async error handling
+- **User feedback**: Clear error messages
+- **Fallback UI**: Graceful degradation
+
+## File Organization Rules
+- **NO additional MD files**: Don't create extra documentation files
+- **Follow existing structure**: Use established patterns
+- **Keep it simple**: Avoid over-engineering
+- **Documentation**: Inline comments and clear code
+---

@@ -1,0 +1,149 @@
+# QA & Testing Standards
+
+## Definition of Done (Per Epic)
+
+### Epic 1: Project Setup & Foundation
+**Automated Testing:**
+- [ ] Turbo repo initializes without errors
+- [ ] Next.js app runs on localhost:3000
+- [ ] React Native app builds and runs on simulator/device
+- [ ] TypeScript compilation passes with no errors
+- [ ] ESLint passes with no warnings
+- [ ] Jest test suite runs successfully
+
+**Manual Testing:**
+- [ ] Verify both apps start without crashes
+- [ ] Check that hot reload works in development
+- [ ] Confirm TypeScript IntelliSense works in IDE
+- [ ] Test that shared packages can be imported
+
+### Epic 2: Core Infrastructure
+**Automated Testing:**
+- [ ] Shared types compile correctly
+- [ ] Mock API returns expected data structure
+- [ ] Zustand store updates correctly
+- [ ] Data fetching hooks work as expected
+- [ ] Unit tests for all shared utilities
+
+**Manual Testing:**
+- [ ] Verify mock data matches challenge requirements
+- [ ] Test state persistence across app restarts
+- [ ] Check that data flows correctly between components
+- [ ] Validate TypeScript types are working properly
+
+### Epic 3: Web Application (Next.js)
+**Automated Testing:**
+- [ ] All pages render without errors
+- [ ] Navigation works correctly
+- [ ] Table displays data properly
+- [ ] Filters work as expected
+- [ ] Pagination functions correctly
+- [ ] Charts render with data
+- [ ] Unit tests for all components
+
+**Manual Testing:**
+- [ ] Test all user interactions (clicking, typing, scrolling)
+- [ ] Verify responsive design on different screen sizes
+- [ ] Check accessibility (keyboard navigation, screen readers)
+- [ ] Test error states and loading states
+- [ ] Verify data accuracy matches mock API
+- [ ] Test browser compatibility (Chrome, Firefox, Safari)
+
+### Epic 4: Mobile Application (React Native)
+**Automated Testing:**
+- [ ] All screens render without crashes
+- [ ] Navigation works correctly
+- [ ] List scrolls smoothly
+- [ ] Pull-to-refresh works
+- [ ] Charts render properly
+- [ ] Unit tests for all components
+
+**Manual Testing:**
+- [ ] Test on both iOS and Android simulators/devices
+- [ ] Verify touch interactions work correctly
+- [ ] Test pull-to-refresh gesture
+- [ ] Check performance (no lag, smooth animations)
+- [ ] Test offline behavior
+- [ ] Verify data accuracy matches web version
+- [ ] Test different screen sizes and orientations
+
+### Epic 5: Cross-Platform Consistency
+**Automated Testing:**
+- [ ] Shared containers work on both platforms
+- [ ] Data consistency between web and mobile
+- [ ] Cross-platform tests pass
+
+**Manual Testing:**
+- [ ] Compare UX between web and mobile
+- [ ] Verify same data displays correctly on both platforms
+- [ ] Test that business logic is identical
+- [ ] Check that shared components behave consistently
+
+### Epic 6: Senior-Level Enhancements
+**Automated Testing:**
+- [ ] Error boundaries catch and handle errors
+- [ ] Loading states display correctly
+- [ ] Performance optimizations work
+- [ ] Accessibility tests pass
+
+**Manual Testing:**
+- [ ] Test error scenarios (network errors, invalid data)
+- [ ] Verify loading states provide good UX
+- [ ] Check performance on slower devices
+- [ ] Test accessibility with screen readers
+- [ ] Verify error messages are user-friendly
+
+## Testing Checklist (Every Feature)
+
+### Automated Testing
+- [ ] Unit tests for business logic
+- [ ] Component tests for UI elements
+- [ ] Integration tests for API calls
+- [ ] TypeScript compilation passes
+- [ ] ESLint passes
+- [ ] No console errors or warnings
+
+### Manual Testing
+- [ ] **User Journey Testing**: Complete end-to-end user flows
+- [ ] **Cross-Platform Testing**: Test on both web and mobile
+- [ ] **Device Testing**: Test on different devices/screen sizes
+- [ ] **Browser Testing**: Test on different browsers (web)
+- [ ] **Performance Testing**: Check for lag or slow loading
+- [ ] **Accessibility Testing**: Keyboard navigation, screen readers
+- [ ] **Error Testing**: Test error states and edge cases
+- [ ] **Data Validation**: Verify data accuracy and consistency
+
+## Testing Tools & Commands
+
+### Automated Testing
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm test -- --watch
+
+# Run tests with coverage
+npm test -- --coverage
+
+# Run specific test file
+npm test -- ComponentName.test.tsx
+```
+
+### Manual Testing Checklist
+- [ ] **Web Testing**: Chrome DevTools, responsive design, accessibility
+- [ ] **Mobile Testing**: iOS Simulator, Android Emulator, physical devices
+- [ ] **Performance**: React DevTools, Network tab, Performance tab
+- [ ] **Accessibility**: Lighthouse, axe-core, manual keyboard testing
+
+## Quality Gates
+- **No TypeScript errors** before committing
+- **All tests pass** before merging
+- **Manual testing completed** for each feature
+- **Performance acceptable** (no obvious lag)
+- **Accessibility compliant** (basic WCAG guidelines)
+- **Cross-platform consistency** verified
+description:
+globs:
+alwaysApply: false
+---

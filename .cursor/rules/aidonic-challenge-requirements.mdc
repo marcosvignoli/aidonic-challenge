@@ -1,0 +1,97 @@
+# Aidonic Challenge Requirements
+
+## Project Overview
+**Objective**: Build a simplified "Aid Distribution Dashboard" with both Web and Mobile interfaces to evaluate technical skills in React (Next.js), React Native, TypeScript, architectural decisions, and clean code practices.
+
+## Core Requirements
+
+### 1. Technology Stack
+- **Web**: Next.js with TypeScript
+- **Mobile**: React Native with TypeScript
+- **Architecture**: Container/Presentation pattern (MUST)
+- **Principles**: SOLID principles and CLEAN Code standards
+- **Testing**: Jest + RTL or React Native Testing Library
+
+### 2. Features Breakdown
+
+#### Web (Next.js) Features
+- **Distribution List Page**:
+  - Table view with columns: Region, Date, Status, Beneficiaries, Action (View Details)
+  - Filters: Region, Status
+  - Pagination
+- **Distribution Details Page**:
+  - Detailed information display
+  - Region, Date, Status, Aid Type, Delivery Channel, Total Beneficiaries
+  - Beneficiary list (names or identifiers)
+- **Charts Page**:
+  - Pie Chart: Number of distributions by status
+  - Line Chart: Number of distributions over time
+  - Use any chart library (Recharts, Chart.js, etc.)
+
+#### Mobile (React Native) Features
+- **Distribution List Screen**:
+  - Scrollable list of cards with Region, Date, Status, Beneficiaries
+  - Tap to view details
+- **Details Screen**:
+  - Same data as Web Details Page, stacked vertically
+  - Back navigation
+  - Pull-to-refresh
+
+### 3. API Requirements
+**Mocked API Integration** (json-server, MSW, or inline mocks)
+- `GET /api/distributions` - List all distributions
+- `GET /api/distributions/{id}` - Get specific distribution details
+
+### 4. Data Structure
+```typescript
+// Distribution List Item
+{
+  "id": "dst--001",
+  "region": "West Nile",
+  "date": "2025-06-15",
+  "status": "Planned",
+  "beneficiaries": 1200,
+  "aidType": "Food",
+  "deliveryChannel": "Vouchers"
+}
+
+// Distribution Details
+{
+  "id": "dst--001",
+  "region": "West Nile",
+  "date": "2025-06-15",
+  "status": "Planned",
+  "beneficiaries": 1200,
+  "aidType": "Food",
+  "deliveryChannel": "Vouchers",
+  "beneficiaryList": [
+    { "id": "bnf--001", "name": "Jane Doe" },
+    { "id": "bnf--002", "name": "John Smith" }
+  ]
+}
+```
+
+## Evaluation Criteria
+1. **Completeness of features** - All specified features implemented
+2. **Code quality, cleanliness, and structure** - Clean, maintainable code
+3. **Use of Container/Presentation pattern** - Mandatory architectural pattern
+4. **Use of SOLID principles and CLEAN Code** - Proper separation of concerns
+5. **Cross-platform consistency** - Similar UX across Web and Mobile
+6. **Testing** - Unit/integration tests with Jest + RTL or RN Testing Library
+7. **README quality and documentation** - Clear setup instructions and architectural choices
+
+## Submission Requirements
+1. Push code to GitHub (public or private)
+2. Include README with:
+   - Setup and run instructions (Web and Mobile)
+   - Assumptions or trade-offs
+   - Architectural overview
+3. Share GitHub link
+
+## Decision-Making Framework
+- **Priority**: Container/Presentation pattern implementation
+- **Code Quality**: SOLID principles and CLEAN Code standards
+- **Testing**: Comprehensive test coverage
+- **Documentation**: Clear architectural decisions and setup instructions
+- **Cross-Platform**: Consistent user experience between Web and Mobile
+---
