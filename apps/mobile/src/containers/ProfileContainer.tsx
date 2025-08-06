@@ -1,19 +1,19 @@
 import React from 'react';
-import ProfileContainer from '../containers/ProfileContainer';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { MainTabParamList } from '../../App';
+import ProfilePresentation from '../presentations/ProfilePresentation';
 
 type ProfileScreenNavigationProp = BottomTabNavigationProp<
   MainTabParamList,
   'Profile'
 >;
 
-interface ProfileScreenProps {
+interface ProfileContainerProps {
   navigation: ProfileScreenNavigationProp;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
-  return <ProfileContainer navigation={navigation} />;
+const ProfileContainer: React.FC<ProfileContainerProps> = ({ navigation }) => {
+  return <ProfilePresentation navigation={navigation} />;
 };
 
-export default ProfileScreen;
+export default ProfileContainer;

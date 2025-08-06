@@ -57,5 +57,5 @@
 - **Performance**: Optimize for mobile performance
 description:
 globs:
-alwaysApply: false
+alwaysApply: true
 ---
