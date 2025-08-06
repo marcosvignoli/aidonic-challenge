@@ -91,7 +91,7 @@ export const omit = <T extends Record<string, any>, K extends keyof T>(
 };
 
 // Mock API service
-export { mockApiService } from "./mockApi";
+export { mockApi } from "./mockApi";
 
 // Zustand store
 export { useDistributionStore } from "./store";

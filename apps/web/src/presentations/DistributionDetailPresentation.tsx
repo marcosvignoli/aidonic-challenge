@@ -1,63 +1,58 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Button, Card } from "@aidonic/ui";
-import { formatCurrency } from "@aidonic/shared-utils";
+import { Button, Card, ErrorAlert } from "@aidonic/ui";
 import { DistributionDetailContainerState } from "@aidonic/shared-containers";
 
 const DistributionDetailPresentation: React.FC<
   DistributionDetailContainerState
-> = ({ loading, error, distribution, refreshDistribution }) => {
-  const router = useRouter();
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "failed":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  if (loading) {
+> = ({ distribution, loading, error, refreshDistribution }) => {
+  if (error) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
-          <div className="text-center py-8">
-            <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="ml-2 text-gray-600">
-                Loading distribution...
-              </span>
-            </div>
+        <div className="text-center">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="mx-auto h-12 w-12"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
           </div>
-        </Card>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Error loading distribution
+          </h3>
+          <p className="text-gray-600">{error}</p>
+          <Button
+            variant="outline"
+            onClick={refreshDistribution}
+            className="mt-4 text-gray-900"
+          >
+            Retry
+          </Button>
+        </div>
       </div>
     );
   }
 
-  if (error) {
+  if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
-          <div className="text-center py-8">
-            <h2 className="text-xl font-semibold text-red-600 mb-2">
-              Error Loading Distribution
-            </h2>
-            <p className="text-gray-600">{error}</p>
-            <Button
-              variant="primary"
-              onClick={refreshDistribution}
-              className="mt-4"
-            >
-              Retry
-            </Button>
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Array.from({ length: 6 }, (_, i) => (
+              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+            ))}
           </div>
-        </Card>
+        </div>
       </div>
     );
   }
@@ -65,23 +60,29 @@ const DistributionDetailPresentation: React.FC<
   if (!distribution) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
-          <div className="text-center py-8">
-            <h2 className="text-xl font-semibold text-gray-600 mb-2">
-              Distribution Not Found
-            </h2>
-            <p className="text-gray-500">
-              The distribution you're looking for doesn't exist.
-            </p>
-            <Button
-              variant="primary"
-              onClick={() => router.push("/distributions")}
-              className="mt-4"
+        <div className="text-center">
+          <div className="text-gray-400 mb-4">
+            <svg
+              className="mx-auto h-12 w-12"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              Back to Distributions
-            </Button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
           </div>
-        </Card>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Distribution not found
+          </h3>
+          <p className="text-gray-500">
+            The distribution you're looking for doesn't exist
+          </p>
+        </div>
       </div>
     );
   }
@@ -92,190 +93,153 @@ const DistributionDetailPresentation: React.FC<
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <Button
-              variant="outline"
-              onClick={() => router.push("/distributions")}
-              className="mb-4"
-            >
-              ← Back to Distributions
-            </Button>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {distribution.name}
+              {distribution.region} Distribution
             </h1>
             <p className="text-gray-600">Distribution ID: {distribution.id}</p>
           </div>
-          <div className="text-right">
-            <span
-              className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(
-                distribution.status
-              )}`}
-            >
-              {distribution.status}
-            </span>
-          </div>
+          <Button
+            variant="outline"
+            onClick={() => (window.location.href = "/distributions")}
+            className="text-gray-900"
+          >
+            Back to List
+          </Button>
         </div>
       </div>
 
+      {/* Distribution Details */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Distribution Details */}
-        <Card>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Distribution Details
+        {/* Main Information */}
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            Distribution Information
           </h2>
+
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Name
+              <label className="block text-sm font-medium text-gray-500">
+                Region
               </label>
-              <p className="mt-1 text-sm text-gray-900">{distribution.name}</p>
-            </div>
-            {distribution.description && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Description
-                </label>
-                <p className="mt-1 text-sm text-gray-900">
-                  {distribution.description}
-                </p>
-              </div>
-            )}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Amount
-              </label>
-              <p className="mt-1 text-lg font-semibold text-gray-900">
-                {formatCurrency(distribution.amount, distribution.currency)}
+              <p className="mt-1 text-lg text-gray-900">
+                {distribution.region}
               </p>
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-500">
+                Date
+              </label>
+              <p className="mt-1 text-lg text-gray-900">
+                {new Date(distribution.date).toLocaleDateString()}
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-500">
                 Status
               </label>
-              <p className="mt-1 text-sm text-gray-900">
-                <span
-                  className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                    distribution.status
-                  )}`}
-                >
-                  {distribution.status}
-                </span>
+              <span
+                className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full mt-1 ${
+                  distribution.status === "Completed"
+                    ? "bg-green-100 text-green-800"
+                    : distribution.status === "In Progress"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-blue-100 text-blue-800"
+                }`}
+              >
+                {distribution.status}
+              </span>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-500">
+                Total Beneficiaries
+              </label>
+              <p className="mt-1 text-lg text-gray-900">
+                {distribution.beneficiaries}
               </p>
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Created
+              <label className="block text-sm font-medium text-gray-500">
+                Aid Type
               </label>
-              <p className="mt-1 text-sm text-gray-900">
-                {new Date(distribution.createdAt).toLocaleString()}
+              <p className="mt-1 text-lg text-gray-900">
+                {distribution.aidType}
               </p>
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Last Updated
+              <label className="block text-sm font-medium text-gray-500">
+                Delivery Channel
               </label>
-              <p className="mt-1 text-sm text-gray-900">
-                {new Date(distribution.updatedAt).toLocaleString()}
+              <p className="mt-1 text-lg text-gray-900">
+                {distribution.deliveryChannel}
               </p>
             </div>
           </div>
         </Card>
 
-        {/* Recipient Details */}
-        <Card>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Recipient Information
+        {/* Beneficiary List */}
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            Beneficiary List
           </h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <p className="mt-1 text-sm text-gray-900">
-                {distribution.recipient.name}
-              </p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <p className="mt-1 text-sm text-gray-900">
-                {distribution.recipient.email}
-              </p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Recipient ID
-              </label>
-              <p className="mt-1 text-sm text-gray-900">
-                {distribution.recipient.id}
-              </p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Member Since
-              </label>
-              <p className="mt-1 text-sm text-gray-900">
-                {new Date(
-                  distribution.recipient.createdAt
-                ).toLocaleDateString()}
-              </p>
-            </div>
-            {distribution.recipient.avatar && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Avatar
-                </label>
-                <div className="mt-1">
-                  <img
-                    src={distribution.recipient.avatar}
-                    alt={distribution.recipient.name}
-                    className="h-12 w-12 rounded-full"
-                  />
+
+          {distribution.beneficiaryList &&
+          distribution.beneficiaryList.length > 0 ? (
+            <div className="space-y-3">
+              {distribution.beneficiaryList.map((beneficiary) => (
+                <div
+                  key={beneficiary.id}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                >
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-medium text-blue-600">
+                        {beneficiary.name.charAt(0)}
+                      </span>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-gray-900">
+                        {beneficiary.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        ID: {beneficiary.id}
+                      </p>
+                    </div>
+                  </div>
                 </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <div className="text-gray-400 mb-4">
+                <svg
+                  className="mx-auto h-12 w-12"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
               </div>
-            )}
-          </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No beneficiaries listed
+              </h3>
+              <p className="text-gray-500">
+                No beneficiary information is available for this distribution
+              </p>
+            </div>
+          )}
         </Card>
       </div>
-
-      {/* Actions */}
-      <Card className="mt-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Actions</h2>
-        <div className="flex space-x-4">
-          <Button
-            variant="primary"
-            onClick={() => {
-              // In a real app, this would trigger an action
-              alert("Edit functionality would be implemented here");
-            }}
-          >
-            Edit Distribution
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => {
-              // In a real app, this would trigger an action
-              alert("Duplicate functionality would be implemented here");
-            }}
-          >
-            Duplicate
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => {
-              // In a real app, this would trigger an action
-              if (
-                confirm("Are you sure you want to delete this distribution?")
-              ) {
-                alert("Delete functionality would be implemented here");
-              }
-            }}
-            className="text-red-600 border-red-600 hover:bg-red-50"
-          >
-            Delete
-          </Button>
-        </div>
-      </Card>
     </div>
   );
 };

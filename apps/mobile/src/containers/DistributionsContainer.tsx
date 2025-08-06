@@ -1,11 +1,8 @@
 import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
-import {
-  DistributionsContainer as SharedDistributionsContainer,
-  DistributionsContainerState,
-} from '@aidonic/shared-containers';
 import { DistributionsStackParamList } from '../../App';
 import DistributionsPresentation from '../presentations/DistributionsPresentation';
+import { useDistributions } from '@aidonic/shared-hooks';
 
 type DistributionsScreenNavigationProp = StackNavigationProp<
   DistributionsStackParamList,
@@ -19,15 +16,39 @@ interface DistributionsContainerProps {
 const DistributionsContainer: React.FC<DistributionsContainerProps> = ({
   navigation,
 }) => {
+  const {
+    distributions,
+    loading,
+    error,
+    pagination,
+    filters,
+    search,
+    regions,
+    statuses,
+    setFilters,
+    setSearch,
+    setPage,
+    setLimit,
+    refreshDistributions,
+  } = useDistributions({ accumulateResults: true });
+
   return (
-    <SharedDistributionsContainer>
-      {(containerState: DistributionsContainerState) => (
-        <DistributionsPresentation
-          {...containerState}
-          navigation={navigation}
-        />
-      )}
-    </SharedDistributionsContainer>
+    <DistributionsPresentation
+      navigation={navigation}
+      distributions={distributions}
+      loading={loading}
+      error={error}
+      pagination={pagination}
+      filters={filters}
+      search={search}
+      regions={regions}
+      statuses={statuses}
+      setFilters={setFilters}
+      setSearch={setSearch}
+      setPage={setPage}
+      setLimit={setLimit}
+      refreshDistributions={refreshDistributions}
+    />
   );
 };
 

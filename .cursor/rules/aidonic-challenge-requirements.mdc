@@ -97,5 +97,112 @@
 - **Cross-Platform**: Consistent user experience between Web and Mobile
 description:
 globs:
-alwaysApply: false
+alwaysApply: true
 ---
+
+
+Aidonic Coding Task: Aid Distribution Dashboard 
+============================================== 
+Objective: 
+---------- 
+Build a simplified "Aid Distribution Dashboard" with both Web and Mobile interfaces. The goal is to evaluate your technical skills in React (Next.js), React Native, TypeScript, architectural decisions, and clean code practices. 
+Read carefully the ‘Evaluation Criteria’ defined below. Specific focus on: - Use of Container/Presentation pattern 
+- Use of SOLID principles and CLEAN Code 
+Overview: 
+--------- 
+You will create: 
+1. A Web dashboard (Next.js) to view and filter aid distributions. 
+2. A Mobile app (React Native) with a similar feature set. 
+3. A Charts page displaying statistics visually (Web & Mobile). 
+4. A Details page showing full distribution info (Web & Mobile). 
+5. Mocked API integration for data handling. 
+6. Apply Container/Presentation pattern (this is a must), SOLID principles, and CLEAN Code standards. 
+Features: 
+--------- 
+WEB (Next.js) 
+------------- 
+- Distribution List Page: 
+- Table view with columns: Region, Date, Status, Beneficiaries, Action (View Details) - Filters: Region, Status 
+- Pagination 
+- Distribution Details Page: 
+- Shows detailed information about a single distribution: 
+- Region 
+- Date 
+- Status 
+- Aid Type 
+- Delivery Channel 
+- Total Beneficiaries 
+- Beneficiary list (names or identifiers)
+- Charts Page: 
+- Pie Chart: Number of distributions by status (e.g., Planned, Completed) - Line Chart: Number of distributions over time 
+- Use any chart library of your choice (e.g., Recharts, Chart.js) 
+MOBILE (React Native) 
+--------------------- 
+- Distribution List Screen: 
+- Scrollable list of cards with Region, Date, Status, Beneficiaries - Tap to view details 
+- Details Screen: 
+- Same data as Web Details Page, stacked vertically 
+- Back navigation 
+- Pull-to-refresh 
+Mocked API: 
+----------- 
+Use json-server, MSW, or inline mocks. Provide at least two endpoints: - GET /api/distributions 
+- GET /api/distributions/{id} 
+Sample Response: 
+/api/distributions 
+[ 
+{ 
+"id": "dst--001", 
+"region": "West Nile", 
+"date": "2025-06-15", 
+"status": "Planned", 
+"beneficiaries": 1200, 
+"aidType": "Food", 
+"deliveryChannel": "Vouchers" 
+}, 
+{ 
+"id": "dst--002", 
+"region": "Eastern Province", 
+"date": "2025-06-10", 
+"status": "Completed", 
+"beneficiaries": 850, 
+"aidType": "Medical", 
+"deliveryChannel": "Direct Distribution" 
+} 
+]
+/api/distributions/dst--001 
+{ 
+"id": "dst--001", 
+"region": "West Nile", 
+"date": "2025-06-15", 
+"status": "Planned", 
+"beneficiaries": 1200, 
+"aidType": "Food", 
+"deliveryChannel": "Vouchers", 
+"beneficiaryList": [ 
+{ "id": "bnf--001", "name": "Jane Doe" }, 
+{ "id": "bnf--002", "name": "John Smith" } 
+] 
+} 
+Evaluation Criteria: 
+-------------------- 
+- Completeness of features 
+- Code quality, cleanliness, and structure 
+- Use of Container/Presentation pattern 
+- Use of SOLID principles and CLEAN Code 
+- Cross-platform consistency 
+- Testing (unit/integration with Jest + RTL or React Native Testing Library) - README quality and documentation of architectural choices 
+Submission: 
+----------- 
+1. Push your code to GitHub (public or private). 
+2. Include a README with: 
+- Setup and run instructions (for Web and Mobile) 
+- Any assumptions or trade-offs 
+- Architectural overview 
+3. Share the GitHub link. 
+Example of screens 
+-----------
+
+
+
+Good luck! We're excited to see your approach.

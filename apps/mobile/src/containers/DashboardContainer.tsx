@@ -1,15 +1,14 @@
 import React from 'react';
+import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import {
-  DashboardContainer as SharedDashboardContainer,
-  DashboardContainerState,
-} from '@aidonic/shared-containers';
-import { MainTabParamList } from '../../App';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { MainTabParamList, DistributionsStackParamList } from '../../App';
 import DashboardPresentation from '../presentations/DashboardPresentation';
+import { useDistributions } from '@aidonic/shared-hooks';
 
-type DashboardScreenNavigationProp = BottomTabNavigationProp<
-  MainTabParamList,
-  'Dashboard'
+type DashboardScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'Dashboard'>,
+  StackNavigationProp<DistributionsStackParamList>
 >;
 
 interface DashboardContainerProps {
@@ -19,12 +18,17 @@ interface DashboardContainerProps {
 const DashboardContainer: React.FC<DashboardContainerProps> = ({
   navigation,
 }) => {
+  const { distributions, loading, error, refreshDistributions } =
+    useDistributions();
+
   return (
-    <SharedDashboardContainer>
-      {(containerState: DashboardContainerState) => (
-        <DashboardPresentation {...containerState} navigation={navigation} />
-      )}
-    </SharedDashboardContainer>
+    <DashboardPresentation
+      navigation={navigation}
+      distributions={distributions}
+      loading={loading}
+      error={error}
+      refreshData={refreshDistributions}
+    />
   );
 };
 

@@ -1,11 +1,8 @@
 import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
-import {
-  DistributionDetailContainer as SharedDistributionDetailContainer,
-  DistributionDetailContainerState,
-} from '@aidonic/shared-containers';
 import { DistributionsStackParamList } from '../../App';
 import DistributionDetailPresentation from '../presentations/DistributionDetailPresentation';
+import { useDistributionDetail } from '@aidonic/shared-hooks';
 
 type DistributionDetailScreenNavigationProp = StackNavigationProp<
   DistributionsStackParamList,
@@ -24,18 +21,17 @@ interface DistributionDetailContainerProps {
 const DistributionDetailContainer: React.FC<
   DistributionDetailContainerProps
 > = ({ navigation, route }) => {
+  const { distribution, loading, error, refreshDistribution } =
+    useDistributionDetail(route.params.distribution.id);
+
   return (
-    <SharedDistributionDetailContainer
-      distributionId={route.params.distribution.id}
-    >
-      {(containerState: DistributionDetailContainerState) => (
-        <DistributionDetailPresentation
-          {...containerState}
-          navigation={navigation}
-          distribution={route.params.distribution}
-        />
-      )}
-    </SharedDistributionDetailContainer>
+    <DistributionDetailPresentation
+      navigation={navigation}
+      distribution={distribution}
+      loading={loading}
+      error={error}
+      refreshDistribution={refreshDistribution}
+    />
   );
 };
 

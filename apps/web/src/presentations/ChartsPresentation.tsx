@@ -1,288 +1,204 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card } from "@aidonic/ui";
-import { formatCurrency } from "@aidonic/shared-utils";
-import { ChartsContainerState } from "@aidonic/shared-containers";
+import { Button, Card, ErrorAlert } from "@aidonic/ui";
+import { ChartsContainerState } from "@aidonic/shared-containers/dist/containers/ChartsContainer";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
   LineChart,
   Line,
-  AreaChart,
-  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
 } from "recharts";
 
 const ChartsPresentation: React.FC<ChartsContainerState> = ({
-  distributions,
-  stats,
+  chartData,
+  timeSeriesData,
   loading,
   error,
+  refreshStats,
 }) => {
-  const [chartData, setChartData] = useState<any[]>([]);
-  const [pieData, setPieData] = useState<any[]>([]);
-  const [timeSeriesData, setTimeSeriesData] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (distributions.length > 0) {
-      // Prepare data for bar chart (amounts by status)
-      const statusData = distributions.reduce((acc: any, dist) => {
-        const status = dist.status;
-        if (!acc[status]) {
-          acc[status] = { status, total: 0, count: 0 };
-        }
-        acc[status].total += dist.amount;
-        acc[status].count += 1;
-        return acc;
-      }, {});
-
-      const barChartData = Object.values(statusData).map((item: any) => ({
-        status: item.status,
-        total: item.total,
-        count: item.count,
-        average: item.total / item.count,
-      }));
-
-      // Prepare data for pie chart (distribution by status)
-      const pieChartData = Object.values(statusData).map((item: any) => ({
-        name: item.status,
-        value: item.count,
-      }));
-
-      // Prepare time series data (amounts over time)
-      const timeData = distributions
-        .sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        )
-        .map((dist, index) => ({
-          date: new Date(dist.createdAt).toLocaleDateString(),
-          amount: dist.amount,
-          status: dist.status,
-          index,
-        }));
-
-      setChartData(barChartData);
-      setPieData(pieChartData);
-      setTimeSeriesData(timeData);
-    }
-  }, [distributions]);
-
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-3 border border-gray-200 rounded shadow-lg">
-          <p className="font-medium">{label}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={index} style={{ color: entry.color }}>
-              {entry.name}:{" "}
-              {entry.name === "total"
-                ? formatCurrency(entry.value)
-                : entry.value}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
 
   if (error) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
-          <div className="text-center py-8">
-            <h2 className="text-xl font-semibold text-red-600 mb-2">
-              Error Loading Charts
-            </h2>
-            <p className="text-gray-600">{error}</p>
+        <div className="text-center">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="mx-auto h-12 w-12"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
           </div>
-        </Card>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Error loading charts
+          </h3>
+          <p className="text-gray-600">{error}</p>
+          <Button
+            variant="outline"
+            onClick={refreshStats}
+            className="mt-4 text-gray-900"
+          >
+            Retry
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Analytics Dashboard
-        </h1>
-        <p className="text-gray-600">
-          Visualize distribution data with interactive charts
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics</h1>
+        <p className="text-gray-600">View distribution statistics and trends</p>
       </div>
 
-      {loading ? (
-        <Card>
-          <div className="text-center py-8">
-            <div className="flex items-center justify-center">
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Pie Chart - Distributions by Status */}
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            Distributions by Status
+          </h2>
+          {loading ? (
+            <div className="h-64 flex items-center justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="ml-2 text-gray-600">Loading charts...</span>
             </div>
-          </div>
+          ) : chartData.length === 0 ? (
+            <div className="h-64 flex items-center justify-center text-gray-500">
+              No data available
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) =>
+                    `${name} ${((percent || 0) * 100).toFixed(0)}%`
+                  }
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="count"
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
         </Card>
-      ) : (
-        <div className="space-y-8">
-          {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Total Distributions
-                </h3>
-                <p className="text-3xl font-bold text-blue-600">
-                  {distributions.length}
-                </p>
+
+        {/* Line Chart - Distributions Over Time */}
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            Distributions Over Time
+          </h2>
+          {loading ? (
+            <div className="h-64 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : timeSeriesData.length === 0 ? (
+            <div className="h-64 flex items-center justify-center text-gray-500">
+              No data available
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart
+                data={timeSeriesData}
+                margin={{
+                  top: 5,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(value) =>
+                    new Date(value).toLocaleDateString()
+                  }
+                />
+                <YAxis />
+                <Tooltip
+                  labelFormatter={(value) =>
+                    new Date(value).toLocaleDateString()
+                  }
+                />
+                <Line
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                  dot={{ fill: "#8884d8", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </Card>
+      </div>
+
+      {/* Summary Stats */}
+      <Card className="mt-8 p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+          Summary Statistics
+        </h2>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }, (_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                <div className="h-8 bg-gray-200 rounded"></div>
               </div>
-            </Card>
-            <Card>
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Total Amount
-                </h3>
-                <p className="text-3xl font-bold text-green-600">
-                  {formatCurrency(
-                    distributions.reduce((sum, dist) => sum + dist.amount, 0)
-                  )}
-                </p>
-              </div>
-            </Card>
-            <Card>
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Completed
-                </h3>
-                <p className="text-3xl font-bold text-green-600">
-                  {distributions.filter((d) => d.status === "completed").length}
-                </p>
-              </div>
-            </Card>
-            <Card>
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-gray-900">Pending</h3>
-                <p className="text-3xl font-bold text-yellow-600">
-                  {distributions.filter((d) => d.status === "pending").length}
-                </p>
-              </div>
-            </Card>
+            ))}
           </div>
-
-          {/* Bar Chart - Amounts by Status */}
-          <Card>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Distribution Amounts by Status
-            </h2>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="status" />
-                  <YAxis />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Legend />
-                  <Bar dataKey="total" fill="#8884d8" name="Total Amount" />
-                  <Bar dataKey="average" fill="#82ca9d" name="Average Amount" />
-                </BarChart>
-              </ResponsiveContainer>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-blue-600 mb-2">
+                {chartData.reduce((sum, item) => sum + item.count, 0)}
+              </div>
+              <div className="text-gray-600">Total Distributions</div>
             </div>
-          </Card>
-
-          {/* Pie Chart - Distribution by Status */}
-          <Card>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Distribution Count by Status
-            </h2>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) =>
-                      `${name} ${((percent || 0) * 100).toFixed(0)}%`
-                    }
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-green-600 mb-2">
+                {chartData.find((item) => item.status === "Completed")?.count ||
+                  0}
+              </div>
+              <div className="text-gray-600">Completed</div>
             </div>
-          </Card>
-
-          {/* Line Chart - Time Series */}
-          <Card>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Distribution Amounts Over Time
-            </h2>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={timeSeriesData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="amount"
-                    stroke="#8884d8"
-                    name="Amount"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-yellow-600 mb-2">
+                {timeSeriesData.length}
+              </div>
+              <div className="text-gray-600">Active Days</div>
             </div>
-          </Card>
-
-          {/* Area Chart - Cumulative Amounts */}
-          <Card>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Cumulative Distribution Amounts
-            </h2>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={timeSeriesData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Legend />
-                  <Area
-                    type="monotone"
-                    dataKey="amount"
-                    stackId="1"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                    name="Amount"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-        </div>
-      )}
+          </div>
+        )}
+      </Card>
     </div>
   );
 };

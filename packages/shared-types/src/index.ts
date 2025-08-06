@@ -14,70 +14,54 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
   };
 }
 
-// User Types
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  avatar?: string;
-  createdAt: string;
-  updatedAt: string;
+// Filter and Search Types for Epic 8
+export interface FilterOptions {
+  region?: string;
+  status?: "Planned" | "Completed" | "In Progress" | "All";
 }
 
-// Distribution Types
+export interface PaginationOptions {
+  page: number;
+  limit: number;
+}
+
+export interface SearchOptions {
+  query: string;
+}
+
+export interface DistributionsQueryParams {
+  filters?: FilterOptions;
+  pagination?: PaginationOptions;
+  search?: SearchOptions;
+}
+
+// Distribution Types (matching requirements exactly)
 export interface Distribution {
   id: string;
-  name: string;
-  description?: string;
-  amount: number;
-  currency: string;
-  status: "pending" | "completed" | "failed";
-  recipientId: string;
-  recipient: User;
-  createdAt: string;
-  updatedAt: string;
+  region: string;
+  date: string;
+  status: "Planned" | "Completed" | "In Progress";
+  beneficiaries: number;
+  aidType: string;
+  deliveryChannel: string;
 }
 
-export interface DistributionStats {
-  total: number;
-  completed: number;
-  pending: number;
-  failed: number;
-  totalAmount: number;
-  averageAmount: number;
+export interface DistributionDetail extends Distribution {
+  beneficiaryList: Beneficiary[];
 }
 
-// Form Types
-export interface FormField {
-  name: string;
-  label: string;
-  type: "text" | "email" | "password" | "number" | "select";
-  required?: boolean;
-  placeholder?: string;
-  options?: { value: string; label: string }[];
-  validation?: {
-    min?: number;
-    max?: number;
-    pattern?: string;
-    message?: string;
-  };
-}
-
-// Navigation Types
-export interface NavigationItem {
-  id: string;
-  label: string;
-  href: string;
-  icon?: string;
-  children?: NavigationItem[];
-}
-
-// Theme Types
-export interface Theme {
+export interface Beneficiary {
   id: string;
   name: string;
-  primary: string;
-  secondary: string;
-  background: string;
-  text: string;
+}
+
+// Chart Data Types
+export interface ChartData {
+  status: string;
+  count: number;
+}
+
+export interface TimeSeriesData {
+  date: string;
+  count: number;
 }

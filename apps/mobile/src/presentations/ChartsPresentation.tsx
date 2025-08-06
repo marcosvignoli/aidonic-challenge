@@ -1,334 +1,53 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
   RefreshControl,
   useColorScheme,
-  Dimensions,
-  TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { ChartsContainerState } from '@aidonic/shared-containers';
 import { MainTabParamList } from '../../App';
-
-const { width } = Dimensions.get('window');
-
-interface ChartData {
-  labels: string[];
-  data: number[];
-  colors: string[];
-}
 
 type ChartsScreenNavigationProp = BottomTabNavigationProp<
   MainTabParamList,
   'Charts'
 >;
 
-interface ChartsPresentationProps extends ChartsContainerState {
+interface ChartsPresentationProps {
   navigation: ChartsScreenNavigationProp;
+  chartData: any[];
+  timeSeriesData: any[];
+  loading: boolean;
+  error: string | null;
+  refreshStats: () => Promise<void>;
 }
 
 const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
   navigation,
+  chartData,
+  timeSeriesData,
   loading,
   error,
-  refreshData,
-  distributions,
-  stats,
+  refreshStats,
 }) => {
-  const [selectedTimeframe, setSelectedTimeframe] = useState<
-    'week' | 'month' | 'year'
-  >('month');
   const isDarkMode = useColorScheme() === 'dark';
 
-  // Calculate analytics from container data
-  const totalAmount = distributions.reduce((sum, dist) => sum + dist.amount, 0);
-  const averageAmount =
-    distributions.length > 0 ? totalAmount / distributions.length : 0;
-
-  const statusBreakdown = {
-    pending: distributions.filter(d => d.status === 'pending').length,
-    completed: distributions.filter(d => d.status === 'completed').length,
-    failed: distributions.filter(d => d.status === 'failed').length,
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Completed':
+        return '#10B981';
+      case 'In Progress':
+        return '#F59E0B';
+      case 'Planned':
+        return '#3B82F6';
+      default:
+        return '#6B7280';
+    }
   };
-
-  // Monthly data (demo)
-  const monthlyData: ChartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    data: [12000, 19000, 15000, 25000, 22000, 30000],
-    colors: ['#007AFF', '#34C759', '#FF9500', '#FF3B30', '#AF52DE', '#5856D6'],
-  };
-
-  // Status data
-  const statusData: ChartData = {
-    labels: ['Pending', 'Completed', 'Failed'],
-    data: [
-      statusBreakdown.pending,
-      statusBreakdown.completed,
-      statusBreakdown.failed,
-    ],
-    colors: ['#FF9500', '#34C759', '#FF3B30'],
-  };
-
-  // Trends data (demo)
-  const trendsData = {
-    thisMonth: totalAmount,
-    lastMonth: totalAmount * 0.85,
-    growth: 15.2,
-  };
-
-  const StatCard: React.FC<{
-    title: string;
-    value: string;
-    icon: string;
-    color: string;
-    subtitle?: string;
-    trend?: string;
-  }> = ({ title, value, icon, color, subtitle, trend }) => (
-    <View
-      style={[
-        styles.statCard,
-        { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-      ]}
-    >
-      <View style={styles.statHeader}>
-        <View style={[styles.statIcon, { backgroundColor: color + '20' }]}>
-          <Icon name={icon} size={24} color={color} />
-        </View>
-        {trend && (
-          <View
-            style={[
-              styles.trendBadge,
-              {
-                backgroundColor: trend.startsWith('+') ? '#34C759' : '#FF3B30',
-              },
-            ]}
-          >
-            <Text style={styles.trendText}>{trend}</Text>
-          </View>
-        )}
-      </View>
-      <Text
-        style={[
-          styles.statValue,
-          { color: isDarkMode ? '#FFFFFF' : '#000000' },
-        ]}
-      >
-        {value}
-      </Text>
-      <Text
-        style={[
-          styles.statTitle,
-          { color: isDarkMode ? '#8E8E93' : '#666666' },
-        ]}
-      >
-        {title}
-      </Text>
-      {subtitle && (
-        <Text
-          style={[
-            styles.statSubtitle,
-            { color: isDarkMode ? '#8E8E93' : '#666666' },
-          ]}
-        >
-          {subtitle}
-        </Text>
-      )}
-    </View>
-  );
-
-  const SimpleBarChart: React.FC<{ data: ChartData; title: string }> = ({
-    data,
-    title,
-  }) => (
-    <View
-      style={[
-        styles.chartCard,
-        { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-      ]}
-    >
-      <Text
-        style={[
-          styles.chartTitle,
-          { color: isDarkMode ? '#FFFFFF' : '#000000' },
-        ]}
-      >
-        {title}
-      </Text>
-      <View style={styles.chartContainer}>
-        {data.labels.map((label, index) => {
-          const maxValue = Math.max(...data.data);
-          const percentage =
-            maxValue > 0 ? (data.data[index] / maxValue) * 100 : 0;
-
-          return (
-            <View key={label} style={styles.barItem}>
-              <View style={styles.barContainer}>
-                <View
-                  style={[
-                    styles.bar,
-                    {
-                      height: `${percentage}%`,
-                      backgroundColor: data.colors[index % data.colors.length],
-                    },
-                  ]}
-                />
-              </View>
-              <Text
-                style={[
-                  styles.barLabel,
-                  { color: isDarkMode ? '#8E8E93' : '#666666' },
-                ]}
-              >
-                {label}
-              </Text>
-              <Text
-                style={[
-                  styles.barValue,
-                  { color: isDarkMode ? '#FFFFFF' : '#000000' },
-                ]}
-              >
-                ${(data.data[index] / 1000).toFixed(0)}k
-              </Text>
-            </View>
-          );
-        })}
-      </View>
-    </View>
-  );
-
-  const PieChart: React.FC<{ data: ChartData; title: string }> = ({
-    data,
-    title,
-  }) => (
-    <View
-      style={[
-        styles.chartCard,
-        { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-      ]}
-    >
-      <Text
-        style={[
-          styles.chartTitle,
-          { color: isDarkMode ? '#FFFFFF' : '#000000' },
-        ]}
-      >
-        {title}
-      </Text>
-      <View style={styles.pieContainer}>
-        <View style={styles.pieLegend}>
-          {data.labels.map((label, index) => {
-            const total = data.data.reduce((sum, val) => sum + val, 0);
-            const percentage = total > 0 ? (data.data[index] / total) * 100 : 0;
-
-            return (
-              <View key={label} style={styles.pieItem}>
-                <View
-                  style={[
-                    styles.pieColor,
-                    { backgroundColor: data.colors[index] },
-                  ]}
-                />
-                <View style={styles.pieText}>
-                  <Text
-                    style={[
-                      styles.pieLabel,
-                      { color: isDarkMode ? '#FFFFFF' : '#000000' },
-                    ]}
-                  >
-                    {label}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.pieValue,
-                      { color: isDarkMode ? '#8E8E93' : '#666666' },
-                    ]}
-                  >
-                    {percentage.toFixed(1)}% ({data.data[index]})
-                  </Text>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-        {/* Simple pie chart representation */}
-        <View style={styles.pieChart}>
-          {data.data.map((value, index) => {
-            const total = data.data.reduce((sum, val) => sum + val, 0);
-            const percentage = total > 0 ? (value / total) * 100 : 0;
-
-            return (
-              <View
-                key={index}
-                style={[
-                  styles.pieSegment,
-                  {
-                    backgroundColor: data.colors[index],
-                    flex: percentage / 100,
-                  },
-                ]}
-              />
-            );
-          })}
-        </View>
-      </View>
-    </View>
-  );
-
-  const TimeframeSelector: React.FC = () => (
-    <View style={styles.timeframeContainer}>
-      {(['week', 'month', 'year'] as const).map(timeframe => (
-        <TouchableOpacity
-          key={timeframe}
-          style={[
-            styles.timeframeButton,
-            selectedTimeframe === timeframe && { backgroundColor: '#007AFF' },
-            { borderColor: isDarkMode ? '#38383A' : '#E5E5EA' },
-          ]}
-          onPress={() => setSelectedTimeframe(timeframe)}
-        >
-          <Text
-            style={[
-              styles.timeframeText,
-              {
-                color:
-                  selectedTimeframe === timeframe
-                    ? '#FFFFFF'
-                    : isDarkMode
-                    ? '#FFFFFF'
-                    : '#000000',
-              },
-            ]}
-          >
-            {timeframe.charAt(0).toUpperCase() + timeframe.slice(1)}
-          </Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
-
-  if (loading) {
-    return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
-        ]}
-      >
-        <Text
-          style={[
-            styles.loadingText,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
-          Loading analytics...
-        </Text>
-      </View>
-    );
-  }
 
   if (error) {
     return (
@@ -338,34 +57,45 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
           { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
         ]}
       >
-        <Text
-          style={[
-            styles.errorText,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
-          Error: {error}
-        </Text>
-      </View>
-    );
-  }
-
-  if (!distributions.length) {
-    return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
-        ]}
-      >
-        <Text
-          style={[
-            styles.errorText,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
-          No data available
-        </Text>
+        <View style={styles.errorContainer}>
+          <Icon
+            name="alert-circle-outline"
+            size={48}
+            color={isDarkMode ? '#FFFFFF' : '#000000'}
+          />
+          <Text
+            style={[
+              styles.errorTitle,
+              { color: isDarkMode ? '#FFFFFF' : '#000000' },
+            ]}
+          >
+            Error Loading Data
+          </Text>
+          <Text
+            style={[
+              styles.errorMessage,
+              { color: isDarkMode ? '#8E8E93' : '#666666' },
+            ]}
+          >
+            {error}
+          </Text>
+          <TouchableOpacity
+            style={[
+              styles.retryButton,
+              { backgroundColor: isDarkMode ? '#2C2C2E' : '#FFFFFF' },
+            ]}
+            onPress={refreshStats}
+          >
+            <Text
+              style={[
+                styles.retryButtonText,
+                { color: isDarkMode ? '#FFFFFF' : '#000000' },
+              ]}
+            >
+              Retry
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -376,199 +106,311 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
         styles.container,
         { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
       ]}
+      contentContainerStyle={styles.content}
       refreshControl={
-        <RefreshControl refreshing={false} onRefresh={refreshData} />
+        <RefreshControl refreshing={loading} onRefresh={refreshStats} />
       }
     >
-      <View style={styles.content}>
-        {/* Timeframe Selector */}
-        <TimeframeSelector />
-
-        {/* Key Metrics */}
-        <View style={styles.metricsGrid}>
-          <StatCard
-            title="Total Amount"
-            value={`$${totalAmount.toLocaleString()}`}
-            icon="cash"
-            color="#34C759"
-            trend="+15.2%"
-          />
-
-          <StatCard
-            title="Distributions"
-            value={distributions.length.toString()}
-            icon="list"
-            color="#007AFF"
-            subtitle="This month"
-          />
-
-          <StatCard
-            title="Average Amount"
-            value={`$${averageAmount.toLocaleString()}`}
-            icon="analytics"
-            color="#FF9500"
-          />
-
-          <StatCard
-            title="Success Rate"
-            value={`${(
-              (statusBreakdown.completed / distributions.length) *
-              100
-            ).toFixed(1)}%`}
-            icon="checkmark-circle"
-            color="#AF52DE"
-            trend="+2.1%"
-          />
-        </View>
-
-        {/* Monthly Trends */}
-        <SimpleBarChart
-          data={monthlyData}
-          title={`${
-            selectedTimeframe.charAt(0).toUpperCase() +
-            selectedTimeframe.slice(1)
-          }ly Distribution Trends`}
-        />
-
-        {/* Status Distribution */}
-        <PieChart data={statusData} title="Distribution Status" />
-
-        {/* Performance Insights */}
-        <View
+      {/* Header */}
+      <View style={styles.header}>
+        <Text
+          style={[styles.title, { color: isDarkMode ? '#FFFFFF' : '#000000' }]}
+        >
+          Analytics
+        </Text>
+        <Text
           style={[
-            styles.insightsCard,
-            { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
+            styles.subtitle,
+            { color: isDarkMode ? '#8E8E93' : '#666666' },
           ]}
         >
-          <Text
-            style={[
-              styles.insightsTitle,
-              { color: isDarkMode ? '#FFFFFF' : '#000000' },
-            ]}
-          >
-            Performance Insights
-          </Text>
-          <View style={styles.insightsList}>
-            <View style={styles.insightItem}>
-              <Icon name="trending-up" size={16} color="#34C759" />
-              <Text
-                style={[
-                  styles.insightText,
-                  { color: isDarkMode ? '#8E8E93' : '#666666' },
-                ]}
-              >
-                {statusBreakdown.completed} distributions completed successfully
-              </Text>
-            </View>
-            <View style={styles.insightItem}>
-              <Icon name="time" size={16} color="#FF9500" />
-              <Text
-                style={[
-                  styles.insightText,
-                  { color: isDarkMode ? '#8E8E93' : '#666666' },
-                ]}
-              >
-                {statusBreakdown.pending} distributions pending approval
-              </Text>
-            </View>
-            <View style={styles.insightItem}>
-              <Icon name="alert-circle" size={16} color="#FF3B30" />
-              <Text
-                style={[
-                  styles.insightText,
-                  { color: isDarkMode ? '#8E8E93' : '#666666' },
-                ]}
-              >
-                {statusBreakdown.failed} distributions failed
-              </Text>
-            </View>
-            <View style={styles.insightItem}>
-              <Icon name="calendar" size={16} color="#007AFF" />
-              <Text
-                style={[
-                  styles.insightText,
-                  { color: isDarkMode ? '#8E8E93' : '#666666' },
-                ]}
-              >
-                Growth rate: +{trendsData.growth}% this month
-              </Text>
-            </View>
-          </View>
-        </View>
+          View distribution statistics and trends
+        </Text>
+      </View>
 
-        {/* Additional Metrics */}
-        <View
+      {/* Summary Stats */}
+      <View
+        style={[
+          styles.summaryCard,
+          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
+        ]}
+      >
+        <Text
           style={[
-            styles.additionalMetrics,
-            { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
+            styles.cardTitle,
+            { color: isDarkMode ? '#FFFFFF' : '#000000' },
           ]}
         >
-          <Text
-            style={[
-              styles.sectionTitle,
-              { color: isDarkMode ? '#FFFFFF' : '#000000' },
-            ]}
-          >
-            Additional Metrics
-          </Text>
+          Summary Statistics
+        </Text>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            {Array.from({ length: 3 }, (_, i) => (
+              <View key={i} style={styles.loadingStat}>
+                <View
+                  style={[
+                    styles.loadingLine,
+                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.loadingLine,
+                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
+                  ]}
+                />
+              </View>
+            ))}
+          </View>
+        ) : (
+          <View style={styles.statsGrid}>
+            <View style={styles.statItem}>
+              <Text
+                style={[
+                  styles.statValue,
+                  { color: isDarkMode ? '#FFFFFF' : '#000000' },
+                ]}
+              >
+                {chartData.reduce((sum, item) => sum + item.count, 0)}
+              </Text>
+              <Text
+                style={[
+                  styles.statLabel,
+                  { color: isDarkMode ? '#8E8E93' : '#666666' },
+                ]}
+              >
+                Total Distributions
+              </Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text
+                style={[
+                  styles.statValue,
+                  { color: isDarkMode ? '#FFFFFF' : '#000000' },
+                ]}
+              >
+                {chartData.find(item => item.status === 'Completed')?.count ||
+                  0}
+              </Text>
+              <Text
+                style={[
+                  styles.statLabel,
+                  { color: isDarkMode ? '#8E8E93' : '#666666' },
+                ]}
+              >
+                Completed
+              </Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text
+                style={[
+                  styles.statValue,
+                  { color: isDarkMode ? '#FFFFFF' : '#000000' },
+                ]}
+              >
+                {timeSeriesData.length}
+              </Text>
+              <Text
+                style={[
+                  styles.statLabel,
+                  { color: isDarkMode ? '#8E8E93' : '#666666' },
+                ]}
+              >
+                Active Days
+              </Text>
+            </View>
+          </View>
+        )}
+      </View>
 
-          <View style={styles.metricRow}>
+      {/* Status Distribution */}
+      <View
+        style={[
+          styles.chartCard,
+          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
+        ]}
+      >
+        <Text
+          style={[
+            styles.cardTitle,
+            { color: isDarkMode ? '#FFFFFF' : '#000000' },
+          ]}
+        >
+          Distributions by Status
+        </Text>
+        {loading ? (
+          <View style={styles.loadingChart}>
+            {Array.from({ length: 4 }, (_, i) => (
+              <View key={i} style={styles.loadingChartItem}>
+                <View
+                  style={[
+                    styles.loadingCircle,
+                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.loadingLine,
+                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
+                  ]}
+                />
+              </View>
+            ))}
+          </View>
+        ) : chartData.length === 0 ? (
+          <View style={styles.emptyChart}>
+            <Icon
+              name="pie-chart-outline"
+              size={48}
+              color={isDarkMode ? '#8E8E93' : '#C7C7CC'}
+            />
             <Text
               style={[
-                styles.metricLabel,
+                styles.emptyChartText,
                 { color: isDarkMode ? '#8E8E93' : '#666666' },
               ]}
             >
-              Processing Time (Avg)
-            </Text>
-            <Text
-              style={[
-                styles.metricValue,
-                { color: isDarkMode ? '#FFFFFF' : '#000000' },
-              ]}
-            >
-              2.3 days
+              No data available
             </Text>
           </View>
+        ) : (
+          <View style={styles.chartContainer}>
+            {chartData.map((item, index) => (
+              <View key={index} style={styles.chartItem}>
+                <View style={styles.chartItemHeader}>
+                  <View
+                    style={[
+                      styles.statusDot,
+                      { backgroundColor: getStatusColor(item.status) },
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      styles.statusName,
+                      { color: isDarkMode ? '#FFFFFF' : '#000000' },
+                    ]}
+                  >
+                    {item.status}
+                  </Text>
+                </View>
+                <View style={styles.chartBar}>
+                  <View
+                    style={[
+                      styles.chartBarFill,
+                      {
+                        backgroundColor: getStatusColor(item.status),
+                        width: `${
+                          (item.count /
+                            Math.max(...chartData.map(d => d.count))) *
+                          100
+                        }%`,
+                      },
+                    ]}
+                  />
+                </View>
+                <Text
+                  style={[
+                    styles.chartValue,
+                    { color: isDarkMode ? '#8E8E93' : '#666666' },
+                  ]}
+                >
+                  {item.count} distributions
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
+      </View>
 
-          <View style={styles.metricRow}>
+      {/* Time Series */}
+      <View
+        style={[
+          styles.chartCard,
+          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
+        ]}
+      >
+        <Text
+          style={[
+            styles.cardTitle,
+            { color: isDarkMode ? '#FFFFFF' : '#000000' },
+          ]}
+        >
+          Distributions Over Time
+        </Text>
+        {loading ? (
+          <View style={styles.loadingChart}>
+            {Array.from({ length: 5 }, (_, i) => (
+              <View key={i} style={styles.loadingChartItem}>
+                <View
+                  style={[
+                    styles.loadingCircle,
+                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.loadingLine,
+                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
+                  ]}
+                />
+              </View>
+            ))}
+          </View>
+        ) : timeSeriesData.length === 0 ? (
+          <View style={styles.emptyChart}>
+            <Icon
+              name="trending-up-outline"
+              size={48}
+              color={isDarkMode ? '#8E8E93' : '#C7C7CC'}
+            />
             <Text
               style={[
-                styles.metricLabel,
+                styles.emptyChartText,
                 { color: isDarkMode ? '#8E8E93' : '#666666' },
               ]}
             >
-              Approval Rate
-            </Text>
-            <Text
-              style={[
-                styles.metricValue,
-                { color: isDarkMode ? '#FFFFFF' : '#000000' },
-              ]}
-            >
-              94.2%
+              No data available
             </Text>
           </View>
-
-          <View style={styles.metricRow}>
-            <Text
-              style={[
-                styles.metricLabel,
-                { color: isDarkMode ? '#8E8E93' : '#666666' },
-              ]}
-            >
-              Peak Distribution Day
-            </Text>
-            <Text
-              style={[
-                styles.metricValue,
-                { color: isDarkMode ? '#FFFFFF' : '#000000' },
-              ]}
-            >
-              Friday
-            </Text>
+        ) : (
+          <View style={styles.timeSeriesContainer}>
+            {timeSeriesData.map((item, index) => (
+              <View key={index} style={styles.timeSeriesItem}>
+                <Text
+                  style={[
+                    styles.timeSeriesDate,
+                    { color: isDarkMode ? '#8E8E93' : '#666666' },
+                  ]}
+                >
+                  {new Date(item.date).toLocaleDateString()}
+                </Text>
+                <View style={styles.timeSeriesBar}>
+                  <View
+                    style={[
+                      styles.timeSeriesBarFill,
+                      {
+                        backgroundColor: '#007AFF',
+                        height: `${
+                          (item.count /
+                            Math.max(...timeSeriesData.map(d => d.count))) *
+                          60
+                        }%`,
+                      },
+                    ]}
+                  />
+                </View>
+                <Text
+                  style={[
+                    styles.timeSeriesValue,
+                    { color: isDarkMode ? '#FFFFFF' : '#000000' },
+                  ]}
+                >
+                  {item.count}
+                </Text>
+              </View>
+            ))}
           </View>
-        </View>
+        )}
       </View>
     </ScrollView>
   );
@@ -581,225 +423,185 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
   },
-  timeframeContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
-    justifyContent: 'center',
+  header: {
+    marginBottom: 24,
   },
-  timeframeButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    borderWidth: 1,
-    marginHorizontal: 4,
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 8,
   },
-  timeframeText: {
-    fontSize: 14,
-    fontWeight: '600',
+  subtitle: {
+    fontSize: 16,
   },
-  metricsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  statCard: {
-    width: '48%',
+  summaryCard: {
+    borderRadius: 12,
     padding: 16,
-    borderRadius: 16,
-    marginBottom: 12,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 5,
   },
-  statHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  statIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  trendBadge: {
-    paddingVertical: 2,
-    paddingHorizontal: 6,
-    borderRadius: 6,
-  },
-  trendText: {
-    color: '#FFFFFF',
-    fontSize: 10,
+  cardTitle: {
+    fontSize: 18,
     fontWeight: '600',
+    marginBottom: 16,
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  loadingStat: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  loadingLine: {
+    height: 16,
+    borderRadius: 4,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  statItem: {
+    alignItems: 'center',
   },
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 4,
   },
-  statTitle: {
+  statLabel: {
     fontSize: 14,
-    fontWeight: '500',
-  },
-  statSubtitle: {
-    fontSize: 12,
-    marginTop: 2,
+    textAlign: 'center',
   },
   chartCard: {
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 20,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 5,
   },
-  chartTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  loadingChart: {
+    gap: 12,
+  },
+  loadingChartItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  loadingCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  emptyChart: {
+    alignItems: 'center',
+    paddingVertical: 24,
+  },
+  emptyChartText: {
+    fontSize: 16,
+    marginTop: 8,
   },
   chartContainer: {
+    gap: 12,
+  },
+  chartItem: {
+    gap: 8,
+  },
+  chartItemHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  statusName: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  chartBar: {
+    height: 8,
+    backgroundColor: '#E5E5EA',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  chartBarFill: {
+    height: '100%',
+    borderRadius: 4,
+  },
+  chartValue: {
+    fontSize: 14,
+  },
+  timeSeriesContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     height: 120,
+    paddingTop: 16,
   },
-  barItem: {
-    flex: 1,
+  timeSeriesItem: {
     alignItems: 'center',
-    marginHorizontal: 2,
+    flex: 1,
   },
-  barContainer: {
-    height: 80,
-    width: '80%',
-    justifyContent: 'flex-end',
+  timeSeriesDate: {
+    fontSize: 10,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  timeSeriesBar: {
+    width: 20,
+    height: 60,
+    backgroundColor: '#E5E5EA',
+    borderRadius: 4,
+    overflow: 'hidden',
     marginBottom: 8,
   },
-  bar: {
+  timeSeriesBarFill: {
     width: '100%',
+    position: 'absolute',
+    bottom: 0,
     borderRadius: 4,
-    minHeight: 4,
   },
-  barLabel: {
+  timeSeriesValue: {
     fontSize: 12,
-    marginBottom: 4,
-  },
-  barValue: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  pieContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  pieLegend: {
-    flex: 1,
-  },
-  pieItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  pieColor: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    marginRight: 12,
-  },
-  pieText: {
-    flex: 1,
-  },
-  pieLabel: {
-    fontSize: 14,
     fontWeight: '500',
-    marginBottom: 2,
   },
-  pieValue: {
-    fontSize: 12,
-  },
-  pieChart: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    flexDirection: 'row',
-    overflow: 'hidden',
-    marginLeft: 20,
-  },
-  pieSegment: {
-    height: '100%',
-  },
-  insightsCard: {
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  insightsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  insightsList: {},
-  insightItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  insightText: {
-    fontSize: 14,
-    marginLeft: 12,
+  errorContainer: {
     flex: 1,
-  },
-  additionalMetrics: {
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  metricRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(142, 142, 147, 0.2)',
+    padding: 24,
   },
-  metricLabel: {
-    fontSize: 14,
-  },
-  metricValue: {
-    fontSize: 16,
+  errorTitle: {
+    fontSize: 18,
     fontWeight: '600',
+    marginTop: 16,
+    marginBottom: 8,
   },
-  loadingText: {
-    textAlign: 'center',
+  errorMessage: {
     fontSize: 16,
-    marginTop: 100,
+    textAlign: 'center',
+    marginBottom: 24,
   },
-  errorText: {
-    textAlign: 'center',
+  retryButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#007AFF',
+  },
+  retryButtonText: {
     fontSize: 16,
-    marginTop: 100,
+    fontWeight: '500',
   },
 });
 

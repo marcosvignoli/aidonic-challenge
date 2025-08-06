@@ -1,8 +1,9 @@
 import React from "react";
+import { colors, componentTokens } from "../design-tokens";
 
 export interface ButtonProps {
   children: React.ReactNode;
-  variant?: "primary" | "secondary" | "outline";
+  variant?: "primary" | "secondary" | "outline" | "danger";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   onClick?: () => void;
@@ -30,13 +31,13 @@ export const Button: React.FC<ButtonProps> = ({
   iconPosition = "left",
 }) => {
   const baseClasses =
-    "font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500";
+    "font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2";
 
   const variantClasses = {
-    primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
-    secondary: "bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500",
-    outline:
-      "border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500",
+    primary: `bg-[${colors.primary[600]}] text-white hover:bg-[${colors.primary[700]}] focus:ring-[${colors.primary[500]}]`,
+    secondary: `bg-[${colors.secondary[600]}] text-white hover:bg-[${colors.secondary[700]}] focus:ring-[${colors.secondary[500]}]`,
+    outline: `border border-[${colors.border.primary}] text-[${colors.text.primary}] hover:bg-[${colors.background.secondary}] focus:ring-[${colors.primary[500]}]`,
+    danger: `bg-[${colors.error[600]}] text-white hover:bg-[${colors.error[700]}] focus:ring-[${colors.error[500]}]`,
   };
 
   const sizeClasses = {
@@ -102,16 +103,12 @@ export const Button: React.FC<ButtonProps> = ({
             />
           </svg>
         )}
-        {!loading && icon && iconPosition === "left" && (
-          <span className="mr-2" aria-hidden="true">
-            {icon}
-          </span>
+        {icon && iconPosition === "left" && !loading && (
+          <span className="mr-2">{icon}</span>
         )}
-        <span className={loading ? "sr-only" : ""}>{children}</span>
-        {!loading && icon && iconPosition === "right" && (
-          <span className="ml-2" aria-hidden="true">
-            {icon}
-          </span>
+        {children}
+        {icon && iconPosition === "right" && !loading && (
+          <span className="ml-2">{icon}</span>
         )}
       </div>
     </button>

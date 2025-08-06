@@ -1,4 +1,5 @@
 import React, { useId } from "react";
+import { colors } from "../design-tokens";
 
 export interface InputProps {
   type?: "text" | "email" | "password" | "number" | "tel" | "url" | "search";
@@ -47,24 +48,27 @@ export const Input: React.FC<InputProps> = ({
   const describedBy = [ariaDescribedBy, errorId].filter(Boolean).join(" ");
 
   const baseClasses =
-    "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors";
+    "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors text-gray-900";
   const errorClasses = error
-    ? "border-red-500 focus:ring-red-500"
-    : "border-gray-300";
+    ? `border-[${colors.error[500]}] focus:ring-[${colors.error[500]}]`
+    : `border-[${colors.border.primary}] focus:ring-[${colors.primary[500]}]`;
   const disabledClasses = disabled
-    ? "bg-gray-100 cursor-not-allowed opacity-50"
-    : "bg-white hover:border-gray-400";
+    ? `bg-[${colors.background.secondary}] cursor-not-allowed opacity-50`
+    : `bg-[${colors.background.primary}] hover:border-[${colors.border.secondary}]`;
 
   return (
     <div className={className}>
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className={`block text-sm font-medium text-[${colors.text.primary}] mb-1`}
         >
           {label}
           {required && (
-            <span className="text-red-500 ml-1" aria-label="required">
+            <span
+              className={`text-[${colors.error[500]}] ml-1`}
+              aria-label="required"
+            >
               *
             </span>
           )}
@@ -92,7 +96,7 @@ export const Input: React.FC<InputProps> = ({
       {error && (
         <p
           id={errorId}
-          className="mt-1 text-sm text-red-600"
+          className={`mt-1 text-sm text-[${colors.error[600]}]`}
           role="alert"
           aria-live="polite"
         >

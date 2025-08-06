@@ -5,7 +5,10 @@
 
 import 'react-native-gesture-handler';
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigatorScreenParams,
+} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar, useColorScheme } from 'react-native';
@@ -19,7 +22,6 @@ import DashboardScreen from './src/screens/DashboardScreen';
 import DistributionsScreen from './src/screens/DistributionsScreen';
 import DistributionDetailScreen from './src/screens/DistributionDetailScreen';
 import ChartsScreen from './src/screens/ChartsScreen';
-import ProfileScreen from './src/screens/ProfileScreen';
 
 // Type definitions for navigation
 export type RootStackParamList = {
@@ -29,9 +31,8 @@ export type RootStackParamList = {
 
 export type MainTabParamList = {
   Dashboard: undefined;
-  Distributions: undefined;
+  Distributions: NavigatorScreenParams<DistributionsStackParamList> | undefined;
   Charts: undefined;
-  Profile: undefined;
 };
 
 export type DistributionsStackParamList = {
@@ -71,7 +72,7 @@ function DistributionsStackNavigator() {
         name="DistributionDetail"
         component={DistributionDetailScreen}
         options={({ route }) => ({
-          title: route.params?.distribution?.name || 'Distribution Details',
+          title: route.params?.distribution?.region || 'Distribution Details',
           headerBackTitle: 'Back',
         })}
       />
@@ -98,9 +99,6 @@ function MainTabNavigator() {
               break;
             case 'Charts':
               iconName = focused ? 'bar-chart' : 'bar-chart-outline';
-              break;
-            case 'Profile':
-              iconName = focused ? 'person' : 'person-outline';
               break;
             default:
               iconName = 'help-outline';
@@ -149,13 +147,6 @@ function MainTabNavigator() {
         component={ChartsScreen}
         options={{
           title: 'Analytics',
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          title: 'Profile',
         }}
       />
     </Tab.Navigator>

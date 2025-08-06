@@ -1,4 +1,4 @@
-import { mockApiService } from "./mockApi";
+import { mockApi } from "./mockApi";
 import { useDistributionStore } from "./store";
 
 // Demo function to show Epic 2 functionality
@@ -9,18 +9,13 @@ export async function demonstrateEpic2() {
   // 1. Test Mock API Service
   console.log("\n1. Testing Mock API Service:");
   try {
-    const distributions = await mockApiService.getDistributions(1, 5);
-    console.log(
-      "✅ Distributions fetched:",
-      distributions.data.length,
-      "items"
-    );
+    const response = await mockApi.getDistributions();
+    console.log("✅ Distributions fetched:", response.data.length, "items");
 
-    const stats = await mockApiService.getDistributionStats();
-    console.log("✅ Stats fetched:", stats.data);
+    const distributionDetail = await mockApi.getDistributionById("dst--001");
+    console.log("✅ Distribution detail fetched:", distributionDetail?.region);
 
-    const users = await mockApiService.getUsers();
-    console.log("✅ Users fetched:", users.data.length, "users");
+    console.log("✅ API Service test completed");
   } catch (error) {
     console.error("❌ API Service error:", error);
   }
@@ -30,18 +25,14 @@ export async function demonstrateEpic2() {
   const store = useDistributionStore.getState();
   console.log("✅ Store initialized with state:", {
     distributionsCount: store.distributions.length,
-    usersCount: store.users.length,
     stats: store.stats ? "loaded" : "not loaded",
   });
 
   // 3. Test Store Actions
   console.log("\n3. Testing Store Actions:");
   try {
-    await store.fetchDistributions(1, 3);
+    await store.fetchDistributions();
     console.log("✅ fetchDistributions action executed");
-
-    await store.fetchUsers();
-    console.log("✅ fetchUsers action executed");
 
     await store.fetchStats();
     console.log("✅ fetchStats action executed");
@@ -53,7 +44,6 @@ export async function demonstrateEpic2() {
   const finalState = useDistributionStore.getState();
   console.log("\n4. Final Store State:");
   console.log("✅ Distributions:", finalState.distributions.length, "items");
-  console.log("✅ Users:", finalState.users.length, "users");
   console.log("✅ Stats:", finalState.stats ? "loaded" : "not loaded");
   console.log("✅ Loading states:", finalState.loading);
   console.log("✅ Error states:", finalState.errors);
@@ -77,4 +67,4 @@ export async function demonstrateEpic2() {
 }
 
 // Export for use in other packages
-export { mockApiService, useDistributionStore };
+export { mockApi, useDistributionStore };

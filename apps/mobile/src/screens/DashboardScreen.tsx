@@ -1,11 +1,13 @@
 import React from 'react';
 import DashboardContainer from '../containers/DashboardContainer';
+import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { MainTabParamList } from '../../App';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { MainTabParamList, DistributionsStackParamList } from '../../App';
 
-type DashboardScreenNavigationProp = BottomTabNavigationProp<
-  MainTabParamList,
-  'Dashboard'
+type DashboardScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'Dashboard'>,
+  StackNavigationProp<DistributionsStackParamList>
 >;
 
 interface DashboardScreenProps {

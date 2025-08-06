@@ -1,11 +1,8 @@
 import React from 'react';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import {
-  ChartsContainer as SharedChartsContainer,
-  ChartsContainerState,
-} from '@aidonic/shared-containers';
 import { MainTabParamList } from '../../App';
 import ChartsPresentation from '../presentations/ChartsPresentation';
+import { useStats } from '@aidonic/shared-hooks';
 
 type ChartsScreenNavigationProp = BottomTabNavigationProp<
   MainTabParamList,
@@ -17,12 +14,18 @@ interface ChartsContainerProps {
 }
 
 const ChartsContainer: React.FC<ChartsContainerProps> = ({ navigation }) => {
+  const { chartData, timeSeriesData, loading, error, refreshStats } =
+    useStats();
+
   return (
-    <SharedChartsContainer>
-      {(containerState: ChartsContainerState) => (
-        <ChartsPresentation {...containerState} navigation={navigation} />
-      )}
-    </SharedChartsContainer>
+    <ChartsPresentation
+      navigation={navigation}
+      chartData={chartData}
+      timeSeriesData={timeSeriesData}
+      loading={loading}
+      error={error}
+      refreshStats={refreshStats}
+    />
   );
 };
 

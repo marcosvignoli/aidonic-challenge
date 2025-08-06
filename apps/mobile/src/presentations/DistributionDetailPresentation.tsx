@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
   useColorScheme,
-  Alert,
-  Share,
-  Linking,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Distribution } from '@aidonic/shared-types';
-import { DistributionDetailContainerState } from '@aidonic/shared-containers';
 import { DistributionsStackParamList } from '../../App';
 
 type DistributionDetailScreenNavigationProp = StackNavigationProp<
@@ -21,197 +17,44 @@ type DistributionDetailScreenNavigationProp = StackNavigationProp<
   'DistributionDetail'
 >;
 
-interface DistributionDetailPresentationProps
-  extends DistributionDetailContainerState {
+interface DistributionDetailPresentationProps {
   navigation: DistributionDetailScreenNavigationProp;
-  distribution: Distribution;
+  distribution: any | null;
+  loading: boolean;
+  error: string | null;
+  refreshDistribution: () => Promise<void>;
 }
 
 const DistributionDetailPresentation: React.FC<
   DistributionDetailPresentationProps
-> = ({ navigation, distribution, loading, error }) => {
+> = ({ navigation, distribution, loading, error, refreshDistribution }) => {
   const isDarkMode = useColorScheme() === 'dark';
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed':
-        return '#34C759';
-      case 'pending':
-        return '#FF9500';
-      case 'failed':
-        return '#FF3B30';
+      case 'Completed':
+        return '#10B981';
+      case 'In Progress':
+        return '#F59E0B';
+      case 'Planned':
+        return '#3B82F6';
       default:
-        return '#8E8E93';
+        return '#6B7280';
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusBackgroundColor = (status: string) => {
     switch (status) {
-      case 'completed':
-        return 'checkmark-circle';
-      case 'pending':
-        return 'time';
-      case 'failed':
-        return 'close-circle';
+      case 'Completed':
+        return isDarkMode ? '#064E3B' : '#D1FAE5';
+      case 'In Progress':
+        return isDarkMode ? '#78350F' : '#FEF3C7';
+      case 'Planned':
+        return isDarkMode ? '#1E3A8A' : '#DBEAFE';
       default:
-        return 'help-circle';
+        return isDarkMode ? '#374151' : '#F3F4F6';
     }
   };
-
-  const handleAction = (action: string) => {
-    Alert.alert(
-      'Confirm Action',
-      `Are you sure you want to ${action.toLowerCase()} this distribution?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: action,
-          style: action === 'Delete' ? 'destructive' : 'default',
-          onPress: () => {
-            Alert.alert(
-              'Success',
-              `Distribution ${action.toLowerCase()}ed successfully`,
-            );
-            if (action === 'Delete') {
-              navigation.goBack();
-            }
-          },
-        },
-      ],
-    );
-  };
-
-  const handleShare = async () => {
-    try {
-      await Share.share({
-        message: `Distribution: ${
-          distribution.name
-        }\nAmount: $${distribution.amount.toLocaleString()}\nRecipient: ${
-          distribution.recipient.name
-        }\nStatus: ${distribution.status}`,
-        title: 'Distribution Details',
-      });
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
-  };
-
-  const handleContactRecipient = () => {
-    Alert.alert(
-      'Contact Recipient',
-      `Contact ${distribution.recipient.name}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Email',
-          onPress: () =>
-            Linking.openURL(`mailto:${distribution.recipient.email}`),
-        },
-        {
-          text: 'Call',
-          onPress: () =>
-            Alert.alert('Call', 'Phone feature not available in demo'),
-        },
-      ],
-    );
-  };
-
-  const InfoRow: React.FC<{
-    icon: string;
-    label: string;
-    value: string;
-    color?: string;
-    onPress?: () => void;
-  }> = ({ icon, label, value, color, onPress }) => (
-    <TouchableOpacity
-      style={styles.infoRow}
-      onPress={onPress}
-      disabled={!onPress}
-    >
-      <View style={styles.infoIcon}>
-        <Icon
-          name={icon}
-          size={20}
-          color={color || (isDarkMode ? '#8E8E93' : '#666666')}
-        />
-      </View>
-      <View style={styles.infoContent}>
-        <Text
-          style={[
-            styles.infoLabel,
-            { color: isDarkMode ? '#8E8E93' : '#666666' },
-          ]}
-        >
-          {label}
-        </Text>
-        <Text
-          style={[
-            styles.infoValue,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
-          {value}
-        </Text>
-      </View>
-      {onPress && (
-        <Icon
-          name="chevron-forward"
-          size={16}
-          color={isDarkMode ? '#8E8E93' : '#666666'}
-        />
-      )}
-    </TouchableOpacity>
-  );
-
-  const ActionButton: React.FC<{
-    title: string;
-    icon: string;
-    color: string;
-    onPress: () => void;
-  }> = ({ title, icon, color, onPress }) => (
-    <TouchableOpacity
-      style={[styles.actionButton, { backgroundColor: color }]}
-      onPress={onPress}
-    >
-      <Icon name={icon} size={20} color="#FFFFFF" />
-      <Text style={styles.actionButtonText}>{title}</Text>
-    </TouchableOpacity>
-  );
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={handleShare} style={styles.headerButton}>
-          <Icon
-            name="share-outline"
-            size={24}
-            color={isDarkMode ? '#FFFFFF' : '#000000'}
-          />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation, isDarkMode]);
-
-  if (loading) {
-    return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
-        ]}
-      >
-        <Text
-          style={[
-            styles.loadingText,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
-          Loading distribution details...
-        </Text>
-      </View>
-    );
-  }
 
   if (error) {
     return (
@@ -221,14 +64,134 @@ const DistributionDetailPresentation: React.FC<
           { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
         ]}
       >
-        <Text
-          style={[
-            styles.loadingText,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
+        <View style={styles.errorContainer}>
+          <Icon
+            name="alert-circle-outline"
+            size={48}
+            color={isDarkMode ? '#FFFFFF' : '#000000'}
+          />
+          <Text
+            style={[
+              styles.errorTitle,
+              { color: isDarkMode ? '#FFFFFF' : '#000000' },
+            ]}
+          >
+            Error Loading Data
+          </Text>
+          <Text
+            style={[
+              styles.errorMessage,
+              { color: isDarkMode ? '#8E8E93' : '#666666' },
+            ]}
+          >
+            {error}
+          </Text>
+          <TouchableOpacity
+            style={[
+              styles.retryButton,
+              { backgroundColor: isDarkMode ? '#2C2C2E' : '#FFFFFF' },
+            ]}
+            onPress={refreshDistribution}
+          >
+            <Text
+              style={[
+                styles.retryButtonText,
+                { color: isDarkMode ? '#FFFFFF' : '#000000' },
+              ]}
+            >
+              Retry
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  if (loading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
+        ]}
+      >
+        <ScrollView
+          contentContainerStyle={styles.loadingContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={refreshDistribution}
+            />
+          }
         >
-          Error: {error}
-        </Text>
+          <View style={styles.loadingContainer}>
+            {Array.from({ length: 6 }, (_, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.loadingCard,
+                  { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
+                ]}
+              >
+                <View style={styles.loadingContent}>
+                  <View
+                    style={[
+                      styles.loadingLine,
+                      { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.loadingLine,
+                      { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.loadingLine,
+                      { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
+                    ]}
+                  />
+                </View>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    );
+  }
+
+  if (!distribution) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
+        ]}
+      >
+        <View style={styles.emptyContainer}>
+          <Icon
+            name="document-outline"
+            size={48}
+            color={isDarkMode ? '#8E8E93' : '#C7C7CC'}
+          />
+          <Text
+            style={[
+              styles.emptyTitle,
+              { color: isDarkMode ? '#FFFFFF' : '#000000' },
+            ]}
+          >
+            Distribution Not Found
+          </Text>
+          <Text
+            style={[
+              styles.emptyMessage,
+              { color: isDarkMode ? '#8E8E93' : '#666666' },
+            ]}
+          >
+            The distribution you're looking for doesn't exist
+          </Text>
+        </View>
       </View>
     );
   }
@@ -240,326 +203,254 @@ const DistributionDetailPresentation: React.FC<
         { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
       ]}
       contentContainerStyle={styles.content}
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={refreshDistribution} />
+      }
     >
-      {/* Header Card */}
+      {/* Header */}
+      <View style={styles.header}>
+        <Text
+          style={[styles.title, { color: isDarkMode ? '#FFFFFF' : '#000000' }]}
+        >
+          {distribution.region} Distribution
+        </Text>
+        <Text
+          style={[
+            styles.subtitle,
+            { color: isDarkMode ? '#8E8E93' : '#666666' },
+          ]}
+        >
+          Distribution ID: {distribution.id}
+        </Text>
+      </View>
+
+      {/* Distribution Information */}
       <View
         style={[
-          styles.headerCard,
+          styles.infoCard,
           { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
         ]}
       >
-        <View style={styles.headerTop}>
-          <Text
-            style={[
-              styles.distributionName,
-              { color: isDarkMode ? '#FFFFFF' : '#000000' },
-            ]}
-          >
-            {distribution.name}
-          </Text>
-          <View
-            style={[
-              styles.statusBadge,
-              { backgroundColor: getStatusColor(distribution.status) },
-            ]}
-          >
-            <Icon
-              name={getStatusIcon(distribution.status)}
-              size={16}
-              color="#FFFFFF"
-            />
-            <Text style={styles.statusText}>{distribution.status}</Text>
-          </View>
-        </View>
-
         <Text
-          style={[styles.amount, { color: isDarkMode ? '#007AFF' : '#007AFF' }]}
+          style={[
+            styles.cardTitle,
+            { color: isDarkMode ? '#FFFFFF' : '#000000' },
+          ]}
         >
-          ${distribution.amount.toLocaleString()}
+          Distribution Information
         </Text>
 
-        {distribution.description && (
-          <View style={styles.descriptionContainer}>
+        <View style={styles.infoGrid}>
+          <View style={styles.infoItem}>
             <Text
               style={[
-                styles.description,
+                styles.infoLabel,
                 { color: isDarkMode ? '#8E8E93' : '#666666' },
               ]}
-              numberOfLines={isExpanded ? undefined : 3}
             >
-              {distribution.description}
+              Region
             </Text>
-            {distribution.description.length > 100 && (
-              <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-                <Text style={styles.expandText}>
-                  {isExpanded ? 'Show Less' : 'Show More'}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
-      </View>
-
-      {/* Recipient Information */}
-      <View
-        style={[
-          styles.section,
-          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-        ]}
-      >
-        <Text
-          style={[
-            styles.sectionTitle,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
-          Recipient Information
-        </Text>
-
-        <InfoRow
-          icon="person"
-          label="Name"
-          value={distribution.recipient.name}
-          onPress={handleContactRecipient}
-        />
-
-        <InfoRow
-          icon="mail"
-          label="Email"
-          value={distribution.recipient.email}
-          onPress={() =>
-            Linking.openURL(`mailto:${distribution.recipient.email}`)
-          }
-        />
-
-        <InfoRow
-          icon="location"
-          label="Location"
-          value="New York, NY" // Demo data
-        />
-      </View>
-
-      {/* Distribution Details */}
-      <View
-        style={[
-          styles.section,
-          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-        ]}
-      >
-        <Text
-          style={[
-            styles.sectionTitle,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
-          Distribution Details
-        </Text>
-
-        <InfoRow icon="card" label="ID" value={distribution.id} />
-
-        <InfoRow icon="cash" label="Currency" value={distribution.currency} />
-
-        <InfoRow
-          icon="calendar"
-          label="Created Date"
-          value={new Date(distribution.createdAt).toLocaleDateString()}
-        />
-
-        <InfoRow
-          icon="time"
-          label="Last Updated"
-          value={new Date(distribution.updatedAt).toLocaleDateString()}
-        />
-
-        <InfoRow
-          icon="document-text"
-          label="Type"
-          value="Bonus Distribution" // Demo data
-        />
-
-        <InfoRow
-          icon="business"
-          label="Department"
-          value="Human Resources" // Demo data
-        />
-      </View>
-
-      {/* Payment Information */}
-      <View
-        style={[
-          styles.section,
-          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-        ]}
-      >
-        <Text
-          style={[
-            styles.sectionTitle,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
-          Payment Information
-        </Text>
-
-        <InfoRow
-          icon="card-outline"
-          label="Payment Method"
-          value="Bank Transfer" // Demo data
-        />
-
-        <InfoRow
-          icon="shield-checkmark"
-          label="Security"
-          value="Encrypted" // Demo data
-        />
-
-        <InfoRow
-          icon="analytics"
-          label="Processing Fee"
-          value="$2.50" // Demo data
-        />
-      </View>
-
-      {/* Actions */}
-      <View
-        style={[
-          styles.section,
-          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-        ]}
-      >
-        <Text
-          style={[
-            styles.sectionTitle,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
-          Actions
-        </Text>
-
-        <View style={styles.actionsContainer}>
-          <ActionButton
-            title="Edit"
-            icon="create-outline"
-            color="#007AFF"
-            onPress={() => handleAction('Edit')}
-          />
-
-          <ActionButton
-            title="Duplicate"
-            icon="copy-outline"
-            color="#34C759"
-            onPress={() => handleAction('Duplicate')}
-          />
-
-          <ActionButton
-            title="Download"
-            icon="download-outline"
-            color="#FF9500"
-            onPress={() => handleAction('Download')}
-          />
-
-          <ActionButton
-            title="Delete"
-            icon="trash-outline"
-            color="#FF3B30"
-            onPress={() => handleAction('Delete')}
-          />
-        </View>
-      </View>
-
-      {/* Status Timeline */}
-      <View
-        style={[
-          styles.section,
-          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-        ]}
-      >
-        <Text
-          style={[
-            styles.sectionTitle,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
-          Status Timeline
-        </Text>
-
-        <View style={styles.timeline}>
-          <View style={styles.timelineItem}>
-            <View
-              style={[styles.timelineDot, { backgroundColor: '#34C759' }]}
-            />
-            <View style={styles.timelineContent}>
-              <Text
-                style={[
-                  styles.timelineTitle,
-                  { color: isDarkMode ? '#FFFFFF' : '#000000' },
-                ]}
-              >
-                Distribution Created
-              </Text>
-              <Text
-                style={[
-                  styles.timelineDate,
-                  { color: isDarkMode ? '#8E8E93' : '#666666' },
-                ]}
-              >
-                {new Date(distribution.createdAt).toLocaleString()}
-              </Text>
-            </View>
+            <Text
+              style={[
+                styles.infoValue,
+                { color: isDarkMode ? '#FFFFFF' : '#000000' },
+              ]}
+            >
+              {distribution.region}
+            </Text>
           </View>
 
-          <View style={styles.timelineItem}>
-            <View
-              style={[styles.timelineDot, { backgroundColor: '#007AFF' }]}
-            />
-            <View style={styles.timelineContent}>
-              <Text
-                style={[
-                  styles.timelineTitle,
-                  { color: isDarkMode ? '#FFFFFF' : '#000000' },
-                ]}
-              >
-                Approved for Processing
-              </Text>
-              <Text
-                style={[
-                  styles.timelineDate,
-                  { color: isDarkMode ? '#8E8E93' : '#666666' },
-                ]}
-              >
-                {new Date(Date.now() - 86400000).toLocaleString()}
-              </Text>
-            </View>
+          <View style={styles.infoItem}>
+            <Text
+              style={[
+                styles.infoLabel,
+                { color: isDarkMode ? '#8E8E93' : '#666666' },
+              ]}
+            >
+              Date
+            </Text>
+            <Text
+              style={[
+                styles.infoValue,
+                { color: isDarkMode ? '#FFFFFF' : '#000000' },
+              ]}
+            >
+              {new Date(distribution.date).toLocaleDateString()}
+            </Text>
           </View>
 
-          <View style={styles.timelineItem}>
+          <View style={styles.infoItem}>
+            <Text
+              style={[
+                styles.infoLabel,
+                { color: isDarkMode ? '#8E8E93' : '#666666' },
+              ]}
+            >
+              Status
+            </Text>
             <View
               style={[
-                styles.timelineDot,
-                { backgroundColor: getStatusColor(distribution.status) },
+                styles.statusBadge,
+                {
+                  backgroundColor: getStatusBackgroundColor(
+                    distribution.status,
+                  ),
+                },
               ]}
-            />
-            <View style={styles.timelineContent}>
+            >
               <Text
                 style={[
-                  styles.timelineTitle,
-                  { color: isDarkMode ? '#FFFFFF' : '#000000' },
+                  styles.statusText,
+                  { color: getStatusColor(distribution.status) },
                 ]}
               >
-                Status:{' '}
-                {distribution.status.charAt(0).toUpperCase() +
-                  distribution.status.slice(1)}
-              </Text>
-              <Text
-                style={[
-                  styles.timelineDate,
-                  { color: isDarkMode ? '#8E8E93' : '#666666' },
-                ]}
-              >
-                {new Date(distribution.updatedAt).toLocaleString()}
+                {distribution.status}
               </Text>
             </View>
           </View>
+
+          <View style={styles.infoItem}>
+            <Text
+              style={[
+                styles.infoLabel,
+                { color: isDarkMode ? '#8E8E93' : '#666666' },
+              ]}
+            >
+              Total Beneficiaries
+            </Text>
+            <Text
+              style={[
+                styles.infoValue,
+                { color: isDarkMode ? '#FFFFFF' : '#000000' },
+              ]}
+            >
+              {distribution.beneficiaries}
+            </Text>
+          </View>
+
+          <View style={styles.infoItem}>
+            <Text
+              style={[
+                styles.infoLabel,
+                { color: isDarkMode ? '#8E8E93' : '#666666' },
+              ]}
+            >
+              Aid Type
+            </Text>
+            <Text
+              style={[
+                styles.infoValue,
+                { color: isDarkMode ? '#FFFFFF' : '#000000' },
+              ]}
+            >
+              {distribution.aidType}
+            </Text>
+          </View>
+
+          <View style={styles.infoItem}>
+            <Text
+              style={[
+                styles.infoLabel,
+                { color: isDarkMode ? '#8E8E93' : '#666666' },
+              ]}
+            >
+              Delivery Channel
+            </Text>
+            <Text
+              style={[
+                styles.infoValue,
+                { color: isDarkMode ? '#FFFFFF' : '#000000' },
+              ]}
+            >
+              {distribution.deliveryChannel}
+            </Text>
+          </View>
         </View>
+      </View>
+
+      {/* Beneficiary List */}
+      <View
+        style={[
+          styles.beneficiaryCard,
+          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
+        ]}
+      >
+        <Text
+          style={[
+            styles.cardTitle,
+            { color: isDarkMode ? '#FFFFFF' : '#000000' },
+          ]}
+        >
+          Beneficiary List
+        </Text>
+
+        {distribution.beneficiaryList &&
+        distribution.beneficiaryList.length > 0 ? (
+          <View style={styles.beneficiaryList}>
+            {distribution.beneficiaryList.map((beneficiary: any) => (
+              <View
+                key={beneficiary.id}
+                style={[
+                  styles.beneficiaryItem,
+                  { backgroundColor: isDarkMode ? '#2C2C2E' : '#F2F2F7' },
+                ]}
+              >
+                <View style={styles.beneficiaryAvatar}>
+                  <Text
+                    style={[
+                      styles.beneficiaryInitial,
+                      { color: isDarkMode ? '#FFFFFF' : '#000000' },
+                    ]}
+                  >
+                    {beneficiary.name.charAt(0)}
+                  </Text>
+                </View>
+                <View style={styles.beneficiaryInfo}>
+                  <Text
+                    style={[
+                      styles.beneficiaryName,
+                      { color: isDarkMode ? '#FFFFFF' : '#000000' },
+                    ]}
+                  >
+                    {beneficiary.name}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.beneficiaryId,
+                      { color: isDarkMode ? '#8E8E93' : '#666666' },
+                    ]}
+                  >
+                    ID: {beneficiary.id}
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <View style={styles.emptyBeneficiaryContainer}>
+            <Icon
+              name="people-outline"
+              size={48}
+              color={isDarkMode ? '#8E8E93' : '#C7C7CC'}
+            />
+            <Text
+              style={[
+                styles.emptyBeneficiaryTitle,
+                { color: isDarkMode ? '#FFFFFF' : '#000000' },
+              ]}
+            >
+              No Beneficiaries Listed
+            </Text>
+            <Text
+              style={[
+                styles.emptyBeneficiaryMessage,
+                { color: isDarkMode ? '#8E8E93' : '#666666' },
+              ]}
+            >
+              No beneficiary information is available for this distribution
+            </Text>
+          </View>
+        )}
       </View>
     </ScrollView>
   );
@@ -572,67 +463,56 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
   },
-  headerButton: {
-    marginRight: 16,
+  loadingContent: {
+    padding: 16,
   },
-  headerCard: {
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+  header: {
+    marginBottom: 24,
   },
-  headerTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-  },
-  distributionName: {
-    flex: 1,
-    fontSize: 24,
+  title: {
+    fontSize: 28,
     fontWeight: 'bold',
-    lineHeight: 30,
-    marginRight: 16,
+    marginBottom: 8,
   },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-  },
-  statusText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
-    marginLeft: 4,
-    textTransform: 'capitalize',
-  },
-  amount: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  descriptionContainer: {
-    marginTop: 8,
-  },
-  description: {
+  subtitle: {
     fontSize: 16,
-    lineHeight: 24,
   },
-  expandText: {
-    color: '#007AFF',
-    fontSize: 14,
+  loadingContainer: {
+    marginBottom: 24,
+  },
+  loadingCard: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  loadingLine: {
+    height: 16,
+    borderRadius: 4,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  emptyTitle: {
+    fontSize: 18,
     fontWeight: '600',
-    marginTop: 8,
+    marginTop: 16,
+    marginBottom: 8,
   },
-  section: {
-    padding: 20,
-    borderRadius: 16,
+  emptyMessage: {
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  infoCard: {
+    borderRadius: 12,
+    padding: 16,
     marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -640,85 +520,119 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 5,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
     marginBottom: 16,
   },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(142, 142, 147, 0.2)',
+  infoGrid: {
+    gap: 16,
   },
-  infoIcon: {
-    width: 32,
-    alignItems: 'center',
-  },
-  infoContent: {
-    flex: 1,
-    marginLeft: 12,
+  infoItem: {
+    gap: 4,
   },
   infoLabel: {
     fontSize: 14,
-    marginBottom: 2,
+    fontWeight: '500',
   },
   infoValue: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
   },
-  actionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+  statusBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
-  actionButton: {
+  statusText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  beneficiaryCard: {
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  beneficiaryList: {
+    gap: 12,
+  },
+  beneficiaryItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 12,
+    borderRadius: 8,
+  },
+  beneficiaryAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#007AFF',
+    alignItems: 'center',
     justifyContent: 'center',
-    width: '48%',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    marginBottom: 12,
+    marginRight: 12,
   },
-  actionButtonText: {
+  beneficiaryInitial: {
+    fontSize: 14,
+    fontWeight: '600',
     color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
   },
-  timeline: {
-    paddingLeft: 8,
-  },
-  timelineItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-  },
-  timelineDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginTop: 4,
-  },
-  timelineContent: {
+  beneficiaryInfo: {
     flex: 1,
-    marginLeft: 16,
   },
-  timelineTitle: {
+  beneficiaryName: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 2,
+  },
+  beneficiaryId: {
+    fontSize: 12,
+  },
+  emptyBeneficiaryContainer: {
+    alignItems: 'center',
+    paddingVertical: 24,
+  },
+  emptyBeneficiaryTitle: {
     fontSize: 16,
     fontWeight: '600',
+    marginTop: 12,
     marginBottom: 4,
   },
-  timelineDate: {
+  emptyBeneficiaryMessage: {
     fontSize: 14,
-  },
-  loadingText: {
     textAlign: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  errorMessage: {
     fontSize: 16,
-    marginTop: 100,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  retryButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#007AFF',
+  },
+  retryButtonText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
 

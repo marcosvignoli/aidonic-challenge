@@ -1,206 +1,267 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Button,
-  Card,
-  Input,
-  ErrorAlert,
-  Skeleton,
-  SkeletonTable,
-} from "@aidonic/ui";
-import { formatCurrency } from "@aidonic/shared-utils";
+import { Button, Card, ErrorAlert, Input } from "@aidonic/ui";
 import { DistributionsContainerState } from "@aidonic/shared-containers";
 
 const DistributionsPresentation: React.FC<DistributionsContainerState> = ({
   distributions,
   loading,
   error,
-  searchTerm,
-  setSearchTerm,
-  statusFilter,
-  setStatusFilter,
-  sortBy,
-  setSortBy,
-  sortOrder,
-  setSortOrder,
-  filteredDistributions,
-  totalPages,
-  currentPage,
-  setCurrentPage,
+  pagination,
+  filters,
+  search,
+  regions,
+  statuses,
+  setFilters,
+  setSearch,
+  setPage,
+  setLimit,
   refreshDistributions,
 }) => {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "failed":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
+  const [searchQuery, setSearchQuery] = useState(search.query);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearch({ query: searchQuery });
   };
 
-  const handleFilterChange = (key: string, value: string) => {
-    if (key === "search") {
-      setSearchTerm(value);
-    } else if (key === "status") {
-      setStatusFilter(value);
-    }
+  const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilters({ ...filters, region: e.target.value });
+  };
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilters({ ...filters, status: e.target.value as any });
   };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    setPage(page);
   };
 
-  const clearFilters = () => {
-    setSearchTerm("");
-    setStatusFilter("all");
+  const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLimit(Number(e.target.value));
   };
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="mx-auto h-12 w-12"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Error loading distributions
+          </h3>
+          <p className="text-gray-600">{error}</p>
+          <Button
+            variant="outline"
+            onClick={refreshDistributions}
+            className="mt-4 text-gray-900"
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Distributions</h1>
-        <p className="text-gray-600">
-          Manage and view all distribution records
-        </p>
+        <p className="text-gray-600">View and manage all aid distributions</p>
       </div>
 
-      {/* Error Alert */}
-      {error && (
-        <div className="mb-6">
-          <ErrorAlert
-            error={error}
-            title="Failed to load distributions"
-            onRetry={refreshDistributions}
-            onDismiss={() => {}}
-          />
-        </div>
-      )}
-
-      {/* Filters */}
+      {/* Filters and Search */}
       <Card className="mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Search
-            </label>
-            <Input
-              value={searchTerm}
-              onChange={(value) => handleFilterChange("search", value)}
-              placeholder="Search by name or description..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
-            <select
-              value={statusFilter}
-              onChange={(e) => handleFilterChange("status", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="all">All Statuses</option>
-              <option value="completed">Completed</option>
-              <option value="pending">Pending</option>
-              <option value="failed">Failed</option>
-            </select>
-          </div>
-          <div className="flex items-end">
-            <Button variant="outline" onClick={clearFilters} className="w-full">
-              Clear Filters
-            </Button>
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Filters & Search
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Search */}
+            <div className="md:col-span-2">
+              <form onSubmit={handleSearchSubmit} className="flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="Search distributions..."
+                  value={searchQuery}
+                  onChange={(value) => setSearchQuery(value)}
+                  className="flex-1"
+                />
+                <Button type="submit" variant="outline">
+                  Search
+                </Button>
+              </form>
+            </div>
+
+            {/* Region Filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Region
+              </label>
+              <select
+                value={filters.region}
+                onChange={handleRegionChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                {regions.map((region) => (
+                  <option key={region} value={region}>
+                    {region}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Status Filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                value={filters.status}
+                onChange={handleStatusChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                {statuses.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </Card>
 
       {/* Distributions Table */}
-      <Card>
-        <div className="overflow-x-auto">
-          {loading ? (
-            <SkeletonTable rows={5} columns={5} />
-          ) : filteredDistributions.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
-                <svg
-                  className="mx-auto h-12 w-12"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No distributions found
-              </h3>
-              <p className="text-gray-500">
-                {searchTerm || statusFilter !== "all"
-                  ? "Try adjusting your filters"
-                  : "No distributions have been created yet"}
-              </p>
+      <Card className="overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">
+            Distribution List
+          </h2>
+        </div>
+
+        {loading ? (
+          <div className="p-6">
+            <div className="animate-pulse space-y-4">
+              {Array.from({ length: 5 }, (_, i) => (
+                <div key={i} className="flex space-x-4">
+                  <div className="h-4 bg-gray-200 rounded flex-1"></div>
+                  <div className="h-4 bg-gray-200 rounded w-24"></div>
+                  <div className="h-4 bg-gray-200 rounded w-20"></div>
+                  <div className="h-4 bg-gray-200 rounded w-16"></div>
+                  <div className="h-4 bg-gray-200 rounded w-20"></div>
+                </div>
+              ))}
             </div>
-          ) : (
+          </div>
+        ) : distributions.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-4">
+              <svg
+                className="mx-auto h-12 w-12"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No distributions found
+            </h3>
+            <p className="text-gray-500">
+              No distributions match your current filters
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Recipient
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Amount
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    Region
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Date
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Beneficiaries
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Aid Type
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Delivery Channel
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Action
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredDistributions.map((distribution) => (
-                  <tr
-                    key={distribution.id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
+                {distributions.map((distribution) => (
+                  <tr key={distribution.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {distribution.recipient.name}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {distribution.recipient.email}
-                        </div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {distribution.region}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {formatCurrency(distribution.amount)}
+                      <div className="text-sm text-gray-900">
+                        {new Date(distribution.date).toLocaleDateString()}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                          distribution.status
-                        )}`}
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          distribution.status === "Completed"
+                            ? "bg-green-100 text-green-800"
+                            : distribution.status === "In Progress"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-blue-100 text-blue-800"
+                        }`}
                       >
                         {distribution.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(distribution.createdAt).toLocaleDateString()}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {distribution.beneficiaries}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {distribution.aidType}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {distribution.deliveryChannel}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <Button
@@ -209,80 +270,87 @@ const DistributionsPresentation: React.FC<DistributionsContainerState> = ({
                         onClick={() =>
                           (window.location.href = `/distributions/${distribution.id}`)
                         }
+                        className="text-gray-900"
                       >
-                        View
+                        View Details
                       </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Pagination */}
-        {!loading && filteredDistributions.length > 0 && (
-          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-            <div className="flex-1 flex justify-between sm:hidden">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={currentPage <= 1}
-                onClick={() => handlePageChange(currentPage - 1)}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={currentPage >= totalPages}
-                onClick={() => handlePageChange(currentPage + 1)}
-              >
-                Next
-              </Button>
-            </div>
-            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Showing{" "}
-                  <span className="font-medium">
-                    {(currentPage - 1) * 10 + 1}
-                  </span>{" "}
-                  to{" "}
-                  <span className="font-medium">
-                    {Math.min(currentPage * 10, filteredDistributions.length)}
-                  </span>{" "}
-                  of{" "}
-                  <span className="font-medium">
-                    {filteredDistributions.length}
-                  </span>{" "}
-                  results
-                </p>
-              </div>
-              <div>
-                <nav
-                  className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-                  aria-label="Pagination"
+        {!loading && distributions.length > 0 && (
+          <div className="px-6 py-4 border-t border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-700">
+                  Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
+                  {Math.min(
+                    pagination.page * pagination.limit,
+                    pagination.total
+                  )}{" "}
+                  of {pagination.total} results
+                </span>
+                <select
+                  value={pagination.limit}
+                  onChange={handleLimitChange}
+                  className="px-3 py-1 border border-gray-300 rounded-md text-sm"
                 >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={currentPage <= 1}
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={currentPage >= totalPages}
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                  >
-                    Next
-                  </Button>
-                </nav>
+                  <option value={5}>5 per page</option>
+                  <option value={10}>10 per page</option>
+                  <option value={20}>20 per page</option>
+                  <option value={50}>50 per page</option>
+                </select>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(pagination.page - 1)}
+                  disabled={pagination.page <= 1}
+                  className="text-gray-900"
+                >
+                  Previous
+                </Button>
+
+                <div className="flex items-center space-x-1">
+                  {Array.from(
+                    { length: Math.min(5, pagination.totalPages) },
+                    (_, i) => {
+                      const page = i + 1;
+                      return (
+                        <Button
+                          key={page}
+                          variant={
+                            page === pagination.page ? "primary" : "outline"
+                          }
+                          size="sm"
+                          onClick={() => handlePageChange(page)}
+                          className={
+                            page === pagination.page ? "" : "text-gray-900"
+                          }
+                        >
+                          {page}
+                        </Button>
+                      );
+                    }
+                  )}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(pagination.page + 1)}
+                  disabled={pagination.page >= pagination.totalPages}
+                  className="text-gray-900"
+                >
+                  Next
+                </Button>
               </div>
             </div>
           </div>

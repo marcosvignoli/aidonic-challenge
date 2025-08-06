@@ -1,19 +1,19 @@
 "use client";
 
 import React from "react";
-import { useParams } from "next/navigation";
 import {
   DistributionDetailContainer as SharedDistributionDetailContainer,
   DistributionDetailContainerState,
 } from "@aidonic/shared-containers";
 import DistributionDetailPresentation from "../presentations/DistributionDetailPresentation";
+import { useParams } from "next/navigation";
 
 const DistributionDetailContainer: React.FC = () => {
   const params = useParams();
-  const id = params.id as string;
+  const distributionId = params.id as string;
 
   return (
-    <SharedDistributionDetailContainer distributionId={id}>
+    <SharedDistributionDetailContainer distributionId={distributionId}>
       {(containerState: DistributionDetailContainerState) => (
         <DistributionDetailPresentation {...containerState} />
       )}
