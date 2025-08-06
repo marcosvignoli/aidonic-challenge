@@ -49,4 +49,13 @@
 - **Follow existing structure**: Use established patterns
 - **Keep it simple**: Avoid over-engineering
 - **Documentation**: Inline comments and clear code
+
+## Mobile-First Approach
+- **Design for mobile first**: Start with mobile constraints
+- **Adapt for web**: Scale up for larger screens
+- **Touch interactions**: Consider touch targets and gestures
+- **Performance**: Optimize for mobile performance
+description:
+globs:
+alwaysApply: false
 ---

@@ -6,11 +6,12 @@
 ## Core Requirements
 
 ### 1. Technology Stack
-- **Web**: Next.js with TypeScript
-- **Mobile**: React Native with TypeScript
+- **Web**: Next.js with TypeScript (already set up)
+- **Mobile**: React Native CLI with TypeScript (already set up)
 - **Architecture**: Container/Presentation pattern (MUST)
 - **Principles**: SOLID principles and CLEAN Code standards
 - **Testing**: Jest + RTL or React Native Testing Library
+- **Monorepo**: npm Workspaces (already configured)
 
 ### 2. Features Breakdown
 
@@ -26,7 +27,7 @@
 - **Charts Page**:
   - Pie Chart: Number of distributions by status
   - Line Chart: Number of distributions over time
-  - Use any chart library (Recharts, Chart.js, etc.)
+  - Use Recharts (cross-platform compatible)
 
 #### Mobile (React Native) Features
 - **Distribution List Screen**:
@@ -38,7 +39,7 @@
   - Pull-to-refresh
 
 ### 3. API Requirements
-**Mocked API Integration** (json-server, MSW, or inline mocks)
+**Mocked API Integration** (inline mocks)
 - `GET /api/distributions` - List all distributions
 - `GET /api/distributions/{id}` - Get specific distribution details
 
@@ -94,4 +95,7 @@
 - **Testing**: Comprehensive test coverage
 - **Documentation**: Clear architectural decisions and setup instructions
 - **Cross-Platform**: Consistent user experience between Web and Mobile
+description:
+globs:
+alwaysApply: false
 ---
