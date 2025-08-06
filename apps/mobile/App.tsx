@@ -39,6 +39,7 @@ export type DistributionsStackParamList = {
   DistributionDetail: { distribution: Distribution };
 };
 
+// Create navigators outside components to avoid React 19 issues
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
 const DistributionsStack = createStackNavigator<DistributionsStackParamList>();
