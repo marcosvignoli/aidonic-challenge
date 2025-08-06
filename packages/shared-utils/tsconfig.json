@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",
     "lib": ["dom", "dom.iterable", "es6"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -13,7 +13,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "declaration": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "allowImportingTsExtensions": false,
+    "moduleDetection": "force"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

@@ -89,3 +89,12 @@ export const omit = <T extends Record<string, any>, K extends keyof T>(
   });
   return result;
 };
+
+// Mock API service
+export { mockApiService } from "./mockApi";
+
+// Zustand store
+export { useDistributionStore } from "./store";
+
+// Demo function
+export { demonstrateEpic2 } from "./demo";
