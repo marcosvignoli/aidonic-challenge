@@ -17,6 +17,8 @@
     "mobile:android": "npm run android --workspace=mobile"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.6.4",
     "prettier": "^3.6.2"
   },
   "engines": {

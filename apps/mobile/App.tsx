@@ -65,7 +65,6 @@ function DistributionsStackNavigator() {
         component={DistributionsScreen}
         options={{
           title: 'Distributions',
-          headerLargeTitle: true,
         }}
       />
       <DistributionsStack.Screen
@@ -135,7 +134,6 @@ function MainTabNavigator() {
         component={DashboardScreen}
         options={{
           title: 'Dashboard',
-          headerLargeTitle: true,
         }}
       />
       <Tab.Screen
@@ -151,7 +149,6 @@ function MainTabNavigator() {
         component={ChartsScreen}
         options={{
           title: 'Analytics',
-          headerLargeTitle: true,
         }}
       />
       <Tab.Screen
@@ -159,7 +156,6 @@ function MainTabNavigator() {
         component={ProfileScreen}
         options={{
           title: 'Profile',
-          headerLargeTitle: true,
         }}
       />
     </Tab.Navigator>

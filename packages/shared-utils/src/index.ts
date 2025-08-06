@@ -98,3 +98,6 @@ export { useDistributionStore } from "./store";
 
 // Demo function
 export { demonstrateEpic2 } from "./demo";
+
+// Performance utilities
+export * from "./performance";
