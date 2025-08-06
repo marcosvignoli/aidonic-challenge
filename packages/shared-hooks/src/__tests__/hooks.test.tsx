@@ -1,5 +1,5 @@
 import React from "react";
-import { renderHook, waitFor } from "@testing-library/react";
+import { renderHook } from "@testing-library/react";
 import { useDistributions, useUsers, useStats } from "../index";
 
 // Mock the store to avoid actual API calls in tests
@@ -65,12 +65,10 @@ describe("Custom Hooks", () => {
       expect(typeof result.current.deleteDistribution).toBe("function");
     });
 
-    it("should auto-fetch distributions when autoFetch is true", async () => {
+    it("should auto-fetch distributions when autoFetch is true", () => {
       renderHook(() => useDistributions({ autoFetch: true }));
 
-      await waitFor(() => {
-        expect(mockStore.fetchDistributions).toHaveBeenCalledWith(1, 10, {});
-      });
+      expect(mockStore.fetchDistributions).toHaveBeenCalledWith(1, 10, {});
     });
 
     it("should not auto-fetch distributions when autoFetch is false", () => {
@@ -91,12 +89,10 @@ describe("Custom Hooks", () => {
       expect(typeof result.current.setSelectedUser).toBe("function");
     });
 
-    it("should auto-fetch users when autoFetch is true", async () => {
+    it("should auto-fetch users when autoFetch is true", () => {
       renderHook(() => useUsers({ autoFetch: true }));
 
-      await waitFor(() => {
-        expect(mockStore.fetchUsers).toHaveBeenCalled();
-      });
+      expect(mockStore.fetchUsers).toHaveBeenCalled();
     });
   });
 
@@ -110,12 +106,10 @@ describe("Custom Hooks", () => {
       expect(typeof result.current.fetchStats).toBe("function");
     });
 
-    it("should auto-fetch stats when autoFetch is true", async () => {
+    it("should auto-fetch stats when autoFetch is true", () => {
       renderHook(() => useStats({ autoFetch: true }));
 
-      await waitFor(() => {
-        expect(mockStore.fetchStats).toHaveBeenCalled();
-      });
+      expect(mockStore.fetchStats).toHaveBeenCalled();
     });
   });
 });

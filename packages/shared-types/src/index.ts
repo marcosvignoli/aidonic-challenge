@@ -38,6 +38,15 @@ export interface Distribution {
   updatedAt: string;
 }
 
+export interface DistributionStats {
+  total: number;
+  completed: number;
+  pending: number;
+  failed: number;
+  totalAmount: number;
+  averageAmount: number;
+}
+
 // Form Types
 export interface FormField {
   name: string;

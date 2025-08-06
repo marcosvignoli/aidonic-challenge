@@ -1,5 +1,6 @@
 {
   "name": "aidonic-challenge",
+  "type": "module",
   "private": true,
   "workspaces": [
     "apps/*",

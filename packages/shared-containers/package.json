@@ -1,0 +1,22 @@
+{
+  "name": "@aidonic/shared-containers",
+  "version": "1.0.0",
+  "description": "Shared container components for cross-platform business logic",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "@aidonic/shared-hooks": "*",
+    "@aidonic/shared-types": "*",
+    "@aidonic/shared-utils": "*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}
