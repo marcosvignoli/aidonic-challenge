@@ -1,17 +1,22 @@
 # Aidonic Challenge - Aid Distribution Dashboard
 
-A comprehensive monorepo built with npm Workspaces featuring a complete Aid Distribution Dashboard with both Web (Next.js) and Mobile (React Native) interfaces. This project demonstrates advanced React development patterns, cross-platform consistency, and production-ready code quality.
+A comprehensive Aid Distribution Dashboard with both Web (Next.js) and Mobile (React Native) interfaces, built using modern development practices and architectural patterns.
 
-## 🎯 Project Overview
+## 🚀 My Development Journey
 
-This is a simplified "Aid Distribution Dashboard" that showcases:
-- **Web Dashboard** (Next.js 15) for viewing and filtering aid distributions
-- **Mobile App** (React Native 0.80.2) with similar feature set
-- **Charts & Analytics** displaying statistics visually (Web & Mobile)
-- **Distribution Details** showing comprehensive distribution information
-- **Mocked API Integration** for data handling
-- **Container/Presentation Pattern** implementation
-- **SOLID Principles** and **Clean Code** standards
+On this project, my first step was getting familiarized with the architectural requests of the SOLID principles and the container/presentation patterns.
+
+After learning about it, I realized that I needed to implement a monorepo to make this work. Probably I could just do two separated projects, but this would mean writing a bunch of duplicated code. So I started learning about it too, since even though I've worked with yarn workspaces before, I had never set up a monorepo myself.
+
+At the beginning, I went with Turborepo, but after facing a bunch of issues with the setup, I switched to npm workspaces since it was easier to set up in my findings.
+
+Once I addressed a few version challenges, most of all from the side of React Native, specifically with the React Native Navigation library and React 19 support, I got two working apps, both Next.js and React Native.
+
+After that initial setup, I started with the creation of rules and a scrum plan with Cursor to get every feature implemented in a gradual way, so I could test and improve the code on each EPIC. I also established the requirements and development standards so the code needed small fixes from my side.
+
+I've been impressed about how much code could be shared between apps with the container/presentation pattern, and so I would probably implement this on my own projects.
+
+I feel like the biggest challenge that I found was thinking about what could be shared and what should remain native for each platform, and the whole setup itself. The code side of things didn't feel like a challenge since the UI was quite simple.
 
 ## 🏗️ Project Structure
 
@@ -320,53 +325,3 @@ npm run build
 # Check types across all packages
 npm run check-types --workspaces
 ```
-
-## 📊 Current Status
-
-### ✅ Completed Features
-- **Epic 1**: Project Setup & Foundation - COMPLETED
-- **Epic 2**: Core Infrastructure - COMPLETED  
-- **Epic 3**: Web Application - COMPLETED
-- **Epic 4**: Mobile Application - COMPLETED
-- **Epic 5**: Cross-Platform Consistency - COMPLETED
-- **Epic 6**: Senior-Level Enhancements - COMPLETED
-- **Epic 7**: Container/Presentation Pattern Implementation - COMPLETED
-- **Epic 8**: Missing Core Features - COMPLETED
-- **Epic 9**: Cross-Platform UI Consistency - COMPLETED
-- **Epic 10**: Accessibility & UX Improvements - COMPLETED
-- **Epic 11**: Code Quality & Cleanup - COMPLETED
-
-### 🎯 Technical Achievements
-- **Web App**: Running on http://localhost:3000 with complete features
-- **Mobile App**: Running on iOS simulator with React Native 0.80.2
-- **Metro Server**: Running on port 8081 with monorepo configuration
-- **Shared Packages**: All properly linked and functional
-- **TypeScript**: Full type safety across the monorepo
-- **React Navigation**: Working perfectly with React 19 + RN 0.80
-- **Charts & Analytics**: Both web and mobile displaying correctly
-- **Error Boundaries**: Comprehensive error handling implemented
-- **Accessibility**: WCAG compliance with proper ARIA attributes
-- **Testing**: High test coverage across all packages
-
-### 🏆 Senior-Level Features Implemented
-- **Error Boundary Implementation**: Catches JavaScript errors and displays user-friendly fallback UI
-- **Loading State Optimization**: Skeleton screens, slow loading indicators, and retry mechanisms
-- **Accessibility Enhancements**: WCAG compliance with proper ARIA attributes and keyboard navigation
-- **Performance Monitoring**: Real-time performance tracking and memory usage monitoring
-- **Enhanced Error Handling**: Comprehensive error states with retry functionality
-- **Production-Ready Code**: Senior-level patterns, comprehensive testing, and optimization
-
-## 🤝 Contributing
-
-1. Make changes in the appropriate workspace
-2. Run tests: `npm run test`
-3. Run linting: `npm run lint`
-4. Format code: `npm run format`
-
-## 📝 License
-
-This project is part of the Aidonic Challenge and demonstrates advanced React development patterns, cross-platform consistency, and production-ready code quality.
-
----
-
-**Built with ❤️ using Next.js 15, React Native 0.80.2, and modern development practices**
