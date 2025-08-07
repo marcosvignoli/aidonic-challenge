@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { View, Text, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import { ButtonRN } from "./ButtonRN";
 import { IconRN } from "./IconRN";
@@ -11,36 +11,40 @@ interface ErrorDisplayRNProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export const ErrorDisplayRN: React.FC<ErrorDisplayRNProps> = ({
-  error,
-  title = "Something went wrong",
-  onRetry,
-  retryLabel = "Retry",
-  style,
-}) => {
-  const styles = getStyles();
+export const ErrorDisplayRN = memo(
+  ({
+    error,
+    title = "Something went wrong",
+    onRetry,
+    retryLabel = "Retry",
+    style,
+  }: ErrorDisplayRNProps) => {
+    const styles = useMemo(() => getStyles(), []);
 
-  return (
-    <View style={[styles.container, style]}>
-      <View style={styles.content}>
-        <View style={styles.iconContainer}>
-          <IconRN type="warning" size={48} color="#dc2626" />
+    return (
+      <View style={[styles.container, style]}>
+        <View style={styles.content}>
+          <View style={styles.iconContainer}>
+            <IconRN type="warning" size={48} color="#dc2626" />
+          </View>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.message}>{error}</Text>
+          {onRetry && (
+            <ButtonRN
+              onPress={onRetry}
+              variant="outline"
+              style={styles.retryButton}
+            >
+              {retryLabel}
+            </ButtonRN>
+          )}
         </View>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.message}>{error}</Text>
-        {onRetry && (
-          <ButtonRN
-            onPress={onRetry}
-            variant="outline"
-            style={styles.retryButton}
-          >
-            {retryLabel}
-          </ButtonRN>
-        )}
       </View>
-    </View>
-  );
-};
+    );
+  }
+);
+
+ErrorDisplayRN.displayName = "ErrorDisplayRN";
 
 const getStyles = () =>
   StyleSheet.create({

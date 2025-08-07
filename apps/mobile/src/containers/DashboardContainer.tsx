@@ -15,11 +15,9 @@ interface DashboardContainerProps {
   navigation: DashboardScreenNavigationProp;
 }
 
-const DashboardContainer: React.FC<DashboardContainerProps> = ({
-  navigation,
-}) => {
+const DashboardContainer = ({ navigation }: DashboardContainerProps) => {
   const { distributions, loading, error, refreshDistributions } =
-    useDistributions();
+    useDistributions({ accumulateResults: true });
 
   return (
     <DashboardPresentation

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -37,15 +37,14 @@ const iconNames: Record<IconType, string> = {
   close: "close-outline",
 };
 
-export const IconRN: React.FC<IconRNProps> = ({
-  type,
-  size = 24,
-  color = "#000",
-  style,
-}) => {
-  return (
-    <Icon name={iconNames[type]} size={size} color={color} style={style} />
-  );
-};
+export const IconRN = memo(
+  ({ type, size = 24, color = "#000", style }: IconRNProps) => {
+    return (
+      <Icon name={iconNames[type]} size={size} color={color} style={style} />
+    );
+  }
+);
+
+IconRN.displayName = "IconRN";
 
 export default IconRN;

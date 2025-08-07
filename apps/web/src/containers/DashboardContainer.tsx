@@ -1,19 +1,20 @@
 "use client";
 
 import React from "react";
-import {
-  DashboardContainer as SharedDashboardContainer,
-  DashboardContainerState,
-} from "@aidonic/shared-containers";
 import DashboardPresentation from "../presentations/DashboardPresentation";
+import { useDistributions } from "@aidonic/shared-hooks";
 
-const DashboardContainer: React.FC = () => {
+const DashboardContainer = () => {
+  const { distributions, loading, error, refreshDistributions } =
+    useDistributions({ accumulateResults: true });
+
   return (
-    <SharedDashboardContainer>
-      {(containerState: DashboardContainerState) => (
-        <DashboardPresentation {...containerState} />
-      )}
-    </SharedDashboardContainer>
+    <DashboardPresentation
+      distributions={distributions}
+      loading={loading}
+      error={error}
+      refreshData={refreshDistributions}
+    />
   );
 };
 

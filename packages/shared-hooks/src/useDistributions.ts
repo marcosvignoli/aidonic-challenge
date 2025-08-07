@@ -47,8 +47,8 @@ export const useDistributions = (options?: {
     totalPages: 0,
   });
   const [filters, setFilters] = useState<FilterOptions>({
-    region: "All",
-    status: "All",
+    region: "",
+    status: "",
   });
   const [search, setSearch] = useState<SearchOptions>({ query: "" });
   const [regions, setRegions] = useState<string[]>([]);
@@ -98,8 +98,8 @@ export const useDistributions = (options?: {
         mockApi.getRegions(),
         mockApi.getStatuses(),
       ]);
-      setRegions(["All", ...regionsData]);
-      setStatuses(["All", ...statusesData]);
+      setRegions(regionsData);
+      setStatuses(statusesData);
     } catch (err) {
       console.error("Failed to fetch filter options:", err);
     }

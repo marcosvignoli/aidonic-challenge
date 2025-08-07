@@ -1,23 +1,28 @@
 "use client";
 
 import React from "react";
-import {
-  DistributionDetailContainer as SharedDistributionDetailContainer,
-  DistributionDetailContainerState,
-} from "@aidonic/shared-containers";
 import DistributionDetailPresentation from "../presentations/DistributionDetailPresentation";
-import { useParams } from "next/navigation";
+import { useDistributionDetail } from "@aidonic/shared-hooks";
 
-const DistributionDetailContainer: React.FC = () => {
-  const params = useParams();
-  const distributionId = params.id as string;
+interface DistributionDetailContainerProps {
+  params: {
+    id: string;
+  };
+}
+
+const DistributionDetailContainer = ({
+  params,
+}: DistributionDetailContainerProps) => {
+  const { distribution, loading, error, refreshDistribution } =
+    useDistributionDetail(params.id);
 
   return (
-    <SharedDistributionDetailContainer distributionId={distributionId}>
-      {(containerState: DistributionDetailContainerState) => (
-        <DistributionDetailPresentation {...containerState} />
-      )}
-    </SharedDistributionDetailContainer>
+    <DistributionDetailPresentation
+      distribution={distribution}
+      loading={loading}
+      error={error}
+      refreshDistribution={refreshDistribution}
+    />
   );
 };
 

@@ -1,19 +1,21 @@
 "use client";
 
 import React from "react";
-import {
-  ChartsContainer as SharedChartsContainer,
-  ChartsContainerState,
-} from "@aidonic/shared-containers";
 import ChartsPresentation from "../presentations/ChartsPresentation";
+import { useStats } from "@aidonic/shared-hooks";
 
-const ChartsContainer: React.FC = () => {
+const ChartsContainer = () => {
+  const { chartData, timeSeriesData, loading, error, refreshStats } =
+    useStats();
+
   return (
-    <SharedChartsContainer>
-      {(containerState: ChartsContainerState) => (
-        <ChartsPresentation {...containerState} />
-      )}
-    </SharedChartsContainer>
+    <ChartsPresentation
+      chartData={chartData}
+      timeSeriesData={timeSeriesData}
+      loading={loading}
+      error={error}
+      refreshStats={refreshStats}
+    />
   );
 };
 

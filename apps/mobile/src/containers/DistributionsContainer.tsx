@@ -13,9 +13,9 @@ interface DistributionsContainerProps {
   navigation: DistributionsScreenNavigationProp;
 }
 
-const DistributionsContainer: React.FC<DistributionsContainerProps> = ({
+const DistributionsContainer = ({
   navigation,
-}) => {
+}: DistributionsContainerProps) => {
   const {
     distributions,
     loading,

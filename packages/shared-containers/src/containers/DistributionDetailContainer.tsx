@@ -10,15 +10,16 @@ export interface DistributionDetailContainerState {
 }
 
 interface DistributionDetailContainerProps {
+  id: string;
   children: (state: DistributionDetailContainerState) => React.ReactNode;
-  distributionId: string;
 }
 
-const DistributionDetailContainer: React.FC<
-  DistributionDetailContainerProps
-> = ({ children, distributionId }) => {
+const DistributionDetailContainer = ({
+  id,
+  children,
+}: DistributionDetailContainerProps) => {
   const { distribution, loading, error, refreshDistribution } =
-    useDistributionDetail(distributionId);
+    useDistributionDetail(id);
 
   return (
     <>

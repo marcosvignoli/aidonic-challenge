@@ -210,10 +210,10 @@ const filterDistributions = (
 
   // Apply filters
   if (filters) {
-    if (filters.region && filters.region !== "All") {
+    if (filters.region && filters.region !== "") {
       filtered = filtered.filter((d) => d.region === filters.region);
     }
-    if (filters.status && filters.status !== "All") {
+    if (filters.status && filters.status !== "") {
       filtered = filtered.filter((d) => d.status === filters.status);
     }
   }

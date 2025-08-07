@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Distribution, ChartData, TimeSeriesData } from "@aidonic/shared-types";
 import { mockApi } from "@aidonic/shared-utils";
 
@@ -16,7 +16,7 @@ export const useStats = (): UseStatsReturn => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -71,15 +71,15 @@ export const useStats = (): UseStatsReturn => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const refreshStats = async () => {
+  const refreshStats = useCallback(async () => {
     await fetchStats();
-  };
+  }, [fetchStats]);
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [fetchStats]);
 
   return {
     chartData,

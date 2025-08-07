@@ -27,9 +27,7 @@ interface DistributionsContainerProps {
   children: (state: DistributionsContainerState) => React.ReactNode;
 }
 
-const DistributionsContainer: React.FC<DistributionsContainerProps> = ({
-  children,
-}) => {
+const DistributionsContainer = ({ children }: DistributionsContainerProps) => {
   const {
     distributions,
     loading,

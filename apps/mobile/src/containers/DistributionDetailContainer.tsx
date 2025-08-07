@@ -13,14 +13,17 @@ interface DistributionDetailContainerProps {
   navigation: DistributionDetailScreenNavigationProp;
   route: {
     params: {
-      distribution: any;
+      distribution: {
+        id: string;
+      };
     };
   };
 }
 
-const DistributionDetailContainer: React.FC<
-  DistributionDetailContainerProps
-> = ({ navigation, route }) => {
+const DistributionDetailContainer = ({
+  navigation,
+  route,
+}: DistributionDetailContainerProps) => {
   const { distribution, loading, error, refreshDistribution } =
     useDistributionDetail(route.params.distribution.id);
 

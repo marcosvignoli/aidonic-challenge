@@ -1,9 +1,10 @@
 import React from "react";
 import { useStats } from "@aidonic/shared-hooks";
+import { ChartData, TimeSeriesData } from "@aidonic/shared-types";
 
 export interface ChartsContainerState {
-  chartData: any[];
-  timeSeriesData: any[];
+  chartData: ChartData[];
+  timeSeriesData: TimeSeriesData[];
   loading: boolean;
   error: string | null;
   refreshStats: () => Promise<void>;
@@ -13,7 +14,7 @@ interface ChartsContainerProps {
   children: (state: ChartsContainerState) => React.ReactNode;
 }
 
-const ChartsContainer: React.FC<ChartsContainerProps> = ({ children }) => {
+const ChartsContainer = ({ children }: ChartsContainerProps) => {
   const { chartData, timeSeriesData, loading, error, refreshStats } =
     useStats();
 

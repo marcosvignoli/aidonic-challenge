@@ -151,7 +151,7 @@ describe("Container Integration Tests", () => {
           beneficiaries: 100,
           aidType: "Food",
           deliveryChannel: "Direct",
-          beneficiaryList: [{ id: "b1", name: "John Doe" }],
+          beneficiaryList: [],
         },
         loading: false,
         error: null,
@@ -165,7 +165,7 @@ describe("Container Integration Tests", () => {
       );
 
       render(
-        <DistributionDetailContainer distributionId="1">
+        <DistributionDetailContainer id="1">
           {(props) => <div data-testid="detail">{props.distribution?.id}</div>}
         </DistributionDetailContainer>
       );

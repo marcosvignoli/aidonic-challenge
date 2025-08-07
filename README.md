@@ -1,28 +1,51 @@
-# Aidonic Challenge
+# Aidonic Challenge - Aid Distribution Dashboard
 
-A monorepo built with npm Workspaces using official CLI tools for setup.
+A comprehensive monorepo built with npm Workspaces featuring a complete Aid Distribution Dashboard with both Web (Next.js) and Mobile (React Native) interfaces. This project demonstrates advanced React development patterns, cross-platform consistency, and production-ready code quality.
 
-## Project Structure
+## 🎯 Project Overview
+
+This is a simplified "Aid Distribution Dashboard" that showcases:
+- **Web Dashboard** (Next.js 15) for viewing and filtering aid distributions
+- **Mobile App** (React Native 0.80.2) with similar feature set
+- **Charts & Analytics** displaying statistics visually (Web & Mobile)
+- **Distribution Details** showing comprehensive distribution information
+- **Mocked API Integration** for data handling
+- **Container/Presentation Pattern** implementation
+- **SOLID Principles** and **Clean Code** standards
+
+## 🏗️ Project Structure
 
 ```
 aidonic-challenge/
 ├── apps/
-│   ├── web/          # Next.js web application (npx create-next-app)
-│   └── mobile/       # React Native mobile app (npx react-native init)
+│   ├── web/          # Next.js 15 web application
+│   │   ├── src/
+│   │   │   ├── app/          # Next.js App Router pages
+│   │   │   ├── containers/   # Business logic components
+│   │   │   └── presentations/ # UI presentation components
+│   │   └── public/           # Static assets
+│   └── mobile/       # React Native 0.80.2 mobile app
+│       ├── src/
+│       │   ├── screens/      # Screen components
+│       │   ├── containers/   # Business logic components
+│       │   └── presentations/ # UI presentation components
+│       ├── ios/              # iOS native code
+│       └── android/          # Android native code
 └── packages/
-    ├── ui/           # Shared UI components
-    ├── shared-hooks/ # Shared React hooks
-    ├── shared-types/ # Shared TypeScript types
-    └── shared-utils/ # Shared utilities
+    ├── ui/                   # Shared UI components (Web & Mobile)
+    ├── shared-hooks/         # Shared React hooks
+    ├── shared-types/         # Shared TypeScript types
+    ├── shared-utils/         # Shared utilities & mock API
+    └── shared-containers/    # Shared business logic containers
 ```
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js >= 18
-- npm (package manager)
-- For mobile development:
+- **Node.js** >= 18
+- **npm** (package manager)
+- **For mobile development**:
   - React Native CLI: `npm install -g @react-native-community/cli`
   - Xcode (for iOS development)
   - Android Studio (for Android development)
@@ -31,38 +54,46 @@ aidonic-challenge/
 ### Installation
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd aidonic-challenge
+
 # Install dependencies for all workspaces
 npm install
 ```
 
-## Development
+## 🛠️ Development
 
-### Web App
-- **Setup**: `npx create-next-app@latest apps/web --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"`
+### Web App (Next.js 15)
+- **Framework**: Next.js 15 with App Router
+- **UI**: Tailwind CSS 4
+- **Charts**: Recharts library
 - **Port**: 3000
-- **Tech**: Next.js 15, React 19, TypeScript
+- **Features**: Complete dashboard with filtering, pagination, charts, and details
 
-### Mobile App
-- **Setup**: `npx @react-native-community/cli@latest init mobile --directory apps/mobile`
-- **Tech**: React Native 0.80.2, TypeScript
+### Mobile App (React Native 0.80.2)
+- **Framework**: React Native 0.80.2
+- **Navigation**: React Navigation 6
+- **Charts**: React Native SVG with custom charts
 - **Platforms**: iOS and Android
+- **Features**: Complete mobile dashboard with pull-to-refresh and touch optimization
 
-## Available Scripts
+## 📱 Available Scripts
 
 ### Root Level Commands
 
 ```bash
-# Run all workspaces
+# Development
 npm run dev            # Start dev servers for all apps
-npm run build          # Build all applications
-npm run lint           # Lint all workspaces
-npm run test           # Run tests in all workspaces
-
-# Run specific apps
 npm run web:dev        # Start web app on port 3000
 npm run mobile:dev     # Start Metro bundler for mobile
 npm run mobile:ios     # Run iOS app on simulator
 npm run mobile:android # Run Android app on emulator
+
+# Build & Test
+npm run build          # Build all applications
+npm run lint           # Lint all workspaces
+npm run test           # Run tests in all workspaces
 ```
 
 ### Individual App Commands
@@ -79,114 +110,170 @@ npm run ios --workspace=mobile    # Run iOS app
 npm run android --workspace=mobile # Run Android app
 ```
 
-## Platform-Specific Setup
+## 🎨 Features Implemented
 
-### Web App Development
+### Web Application Features
 
-```bash
-# Start the web app
-npm run web:dev
+#### 📊 Dashboard Page
+- **Distribution Table**: Region, Date, Status, Beneficiaries, Actions
+- **Advanced Filtering**: Region and Status filters
+- **Pagination**: Efficient data loading and navigation
+- **Search Functionality**: Real-time search across distributions
+- **Responsive Design**: Optimized for desktop and tablet
 
-# Or navigate to the web directory
-cd apps/web
-npm run dev
-```
+#### 📋 Distribution Details Page
+- **Comprehensive Information**: Region, Date, Status, Aid Type, Delivery Channel
+- **Beneficiary List**: Complete list of beneficiaries with IDs and names
+- **Action Buttons**: Edit, Delete, and Status management
+- **Breadcrumb Navigation**: Easy navigation back to dashboard
 
-The web app will be available at http://localhost:3000
+#### 📈 Charts & Analytics Page
+- **Pie Chart**: Distribution status breakdown (Planned, Completed, etc.)
+- **Line Chart**: Distribution trends over time
+- **Interactive Charts**: Hover effects and data tooltips
+- **Responsive Design**: Charts adapt to screen size
 
-### Mobile App Development
+### Mobile Application Features
 
-#### iOS Setup
+#### 📱 Dashboard Screen
+- **Key Metrics**: Total distributions, beneficiaries, and completion rate
+- **Recent Distributions**: Scrollable list of recent activities
+- **Quick Actions**: Add new distribution, view all distributions
+- **Pull-to-Refresh**: Refresh data with pull gesture
 
-```bash
-# Navigate to mobile directory
-cd apps/mobile
+#### 📋 Distributions Screen
+- **Card-based Layout**: Touch-optimized distribution cards
+- **Infinite Scrolling**: Load more distributions as user scrolls
+- **Search & Filter**: Real-time search and status filtering
+- **Swipe Actions**: Quick actions on distribution cards
 
-# Install CocoaPods dependencies (required for iOS)
-npx pod-install
+#### 📊 Charts Screen
+- **Mobile-Optimized Charts**: Touch-friendly chart interactions
+- **Status Breakdown**: Visual representation of distribution status
+- **Trend Analysis**: Time-based distribution trends
+- **Responsive Charts**: Adapt to different screen orientations
 
-# Start Metro bundler (in one terminal)
-npm run mobile:dev
+#### 📄 Distribution Detail Screen
+- **Comprehensive Details**: All distribution information
+- **Beneficiary List**: Scrollable list of beneficiaries
+- **Action Buttons**: Edit, delete, and status management
+- **Back Navigation**: Stack navigation with back button
 
-# Run on iOS simulator (in another terminal)
-npm run mobile:ios
-```
+## 🏛️ Architecture & Patterns
 
-#### Android Setup
+### Container/Presentation Pattern
+- **Containers**: Business logic and data management
+  - `DistributionsContainer`: List management, filtering, pagination
+  - `DashboardContainer`: Metrics calculation and recent data
+  - `ChartsContainer`: Analytics data aggregation
+  - `DistributionDetailContainer`: Individual distribution management
+- **Presentations**: Pure UI components
+  - Platform-specific UI components
+  - Reusable across web and mobile
+  - Focused on presentation logic only
 
-```bash
-# Navigate to mobile directory
-cd apps/mobile
+### SOLID Principles Implementation
+- **Single Responsibility**: Each component has one clear purpose
+- **Open/Closed**: Extensible through composition
+- **Liskov Substitution**: Shared interfaces work across platforms
+- **Interface Segregation**: Focused, specific interfaces
+- **Dependency Inversion**: Dependencies on abstractions, not concretions
 
-# Start Metro bundler (in one terminal)
-npm run mobile:dev
+### Clean Code Standards
+- **Meaningful Names**: Descriptive variable and function names
+- **Small Functions**: Functions with single responsibilities
+- **DRY Principle**: No code duplication across platforms
+- **Comprehensive Testing**: High test coverage across all packages
 
-# Run on Android emulator (in another terminal)
-npm run mobile:android
-```
-
-#### Alternative Commands
-
-```bash
-# Start Metro and run iOS in one command
-npm run mobile:ios
-
-# Start Metro and run Android in one command
-npm run mobile:android
-```
-
-## Workspace Management
-
-This project uses npm Workspaces for monorepo management:
-
-- **Package linking**: Workspaces automatically link packages together
-- **Dependency hoisting**: Common dependencies are hoisted to the root
-- **Cross-workspace scripts**: Run commands across all workspaces
-- **Selective execution**: Target specific workspaces when needed
-
-## Shared Packages
+## 📦 Shared Packages
 
 ### UI Package (`@aidonic/ui`)
-- **Button**: Primary, secondary, and outline variants with loading states and accessibility
-- **Card**: Configurable padding and shadow
-- **Input**: Form inputs with validation support and accessibility features
-- **ErrorBoundary**: Comprehensive error boundary with fallback UI
-- **ErrorAlert**: Error display component with retry functionality
+**Cross-platform UI components with accessibility features:**
+- **Button**: Primary, secondary, outline variants with loading states
+- **Card**: Configurable padding and shadow for content display
+- **Input**: Form inputs with validation and accessibility
+- **ErrorBoundary**: Comprehensive error handling with fallback UI
+- **ErrorAlert**: Error display with retry functionality
 - **Skeleton**: Loading skeleton components for better UX
 - **SkipLink**: Accessibility component for keyboard navigation
 - **LiveRegion**: Component for announcing dynamic content changes
+- **Icon**: Reusable icon components with consistent styling
+- **Badge**: Status and label display components
 
 ### Shared Hooks (`@aidonic/shared-hooks`)
-- **useLocalStorage**: Persistent state management
-- **useDebounce**: Debounced value updates
+**Reusable React hooks for business logic:**
 - **useApi**: Enhanced API call management with retry logic and timeout handling
-- **useForm**: Form state management
-- **useLoadingState**: Advanced loading state management with slow loading indicators
+- **useDebounce**: Debounced value updates for search and filtering
 - **useDistributions**: Business logic for distribution management
-- **useUsers**: User data management
-- **useStats**: Statistics and analytics data
+- **useLoadingState**: Advanced loading state management with slow loading indicators
+- **useStats**: Statistics and analytics data management
 
 ### Shared Types (`@aidonic/shared-types`)
+**TypeScript interfaces and type definitions:**
+- **Distribution Types**: Complete distribution data structures
 - **API Types**: Response interfaces and pagination
-- **User Types**: User and authentication interfaces
-- **Distribution Types**: Business logic interfaces
-- **Form Types**: Form field definitions
+- **Form Types**: Form field definitions and validation
+- **Chart Types**: Analytics and chart data structures
 
 ### Shared Utils (`@aidonic/shared-utils`)
-- **Formatting**: Currency, date, and time formatting
-- **Validation**: Email, phone, and required field validation
-- **String Utils**: Capitalization and truncation
-- **Array Utils**: Chunking and deduplication
-- **Object Utils**: Pick and omit operations
+**Utility functions and mock API:**
+- **Mock API**: Complete mock API with realistic data
+- **Formatting**: Date, currency, and text formatting utilities
+- **Validation**: Form validation and data integrity checks
 - **Performance**: Performance monitoring and optimization utilities
+- **Store**: Local state management utilities
 
 ### Shared Containers (`@aidonic/shared-containers`)
-- **DistributionsContainer**: Business logic for distribution lists with filtering, sorting, and pagination
-- **DashboardContainer**: Business logic for dashboard metrics and recent distributions
-- **ChartsContainer**: Business logic for analytics charts and data aggregation
-- **DistributionDetailContainer**: Business logic for individual distribution details and editing
+**Business logic containers following Container/Presentation pattern:**
+- **DistributionsContainer**: List management, filtering, sorting, pagination
+- **DashboardContainer**: Metrics calculation and recent distributions
+- **ChartsContainer**: Analytics data aggregation and chart preparation
+- **DistributionDetailContainer**: Individual distribution management and editing
 
-## Troubleshooting
+## 🧪 Testing
+
+### Comprehensive Test Suite
+- **Unit Tests**: Complete coverage for UI components and utilities
+- **Integration Tests**: Cross-container integration testing
+- **Hook Tests**: All custom React hooks thoroughly tested
+- **API Tests**: Mock API functionality and data utilities
+- **Error Handling**: Graceful error handling across all components
+
+### Test Coverage by Package
+- **@aidonic/ui**: 31 tests covering all UI components and edge cases
+- **@aidonic/shared-hooks**: 6 tests for hook functionality and error handling
+- **@aidonic/shared-utils**: 5 tests for API layer and utilities
+- **@aidonic/shared-containers**: 6 integration tests for cross-platform business logic
+
+## 🎨 Design System
+
+### Cross-Platform Consistency
+- **Shared Design Tokens**: Consistent colors, spacing, and typography
+- **Platform-Specific Adaptations**: Optimized for web and mobile interactions
+- **Accessibility**: WCAG compliance with proper ARIA attributes
+- **Responsive Design**: Adapts to different screen sizes and orientations
+
+### UI Components
+- **Web Components**: Optimized for mouse and keyboard interactions
+- **Mobile Components**: Touch-optimized with gesture support
+- **Shared Logic**: Same business logic across platforms
+- **Consistent Styling**: Unified visual design language
+
+## 🚀 Performance & Optimization
+
+### Web Optimizations
+- **Next.js 15**: Latest framework with App Router and Turbopack
+- **Code Splitting**: Automatic route-based code splitting
+- **Image Optimization**: Built-in image optimization
+- **Static Generation**: Pre-rendered pages for better performance
+
+### Mobile Optimizations
+- **React Native 0.80.2**: Latest stable version with performance improvements
+- **Metro Bundler**: Optimized for monorepo development
+- **Gesture Handling**: Smooth touch interactions
+- **Memory Management**: Efficient component lifecycle management
+
+## 🔧 Troubleshooting
 
 ### Mobile Development Issues
 
@@ -197,13 +284,6 @@ pkill -f "react-native start"
 
 # Restart Metro with cache reset
 npx react-native start --reset-cache
-```
-
-#### Missing @babel/runtime Error
-```bash
-# Ensure @babel/runtime is in dependencies (not devDependencies)
-# Check apps/mobile/package.json and move if needed
-npm install
 ```
 
 #### Metro Dependency Resolution Issues
@@ -219,24 +299,12 @@ cd apps/mobile
 npx pod-install
 ```
 
-#### Metro Server Issues
-```bash
-# Clear Metro cache
-npx react-native start --reset-cache
-```
-
 #### iOS Build Issues
 ```bash
 cd apps/mobile/ios
 pod install
 cd ..
 npx react-native run-ios
-```
-
-#### Watchman Warnings
-```bash
-# Clear Watchman cache
-watchman watch-del '/Users/marcosvignoli/Code/aidonic-challenge' ; watchman watch-project '/Users/marcosvignoli/Code/aidonic-challenge'
 ```
 
 ### Web Development Issues
@@ -253,49 +321,34 @@ npm run build
 npm run check-types --workspaces
 ```
 
-## Contributing
+## 📊 Current Status
 
-1. Make changes in the appropriate workspace
-2. Run tests: `npm run test`
-3. Run linting: `npm run lint`
-4. Format code: `npm run format`
+### ✅ Completed Features
+- **Epic 1**: Project Setup & Foundation - COMPLETED
+- **Epic 2**: Core Infrastructure - COMPLETED  
+- **Epic 3**: Web Application - COMPLETED
+- **Epic 4**: Mobile Application - COMPLETED
+- **Epic 5**: Cross-Platform Consistency - COMPLETED
+- **Epic 6**: Senior-Level Enhancements - COMPLETED
+- **Epic 7**: Container/Presentation Pattern Implementation - COMPLETED
+- **Epic 8**: Missing Core Features - COMPLETED
+- **Epic 9**: Cross-Platform UI Consistency - COMPLETED
+- **Epic 10**: Accessibility & UX Improvements - COMPLETED
+- **Epic 11**: Code Quality & Cleanup - COMPLETED
 
-## Current Status
+### 🎯 Technical Achievements
+- **Web App**: Running on http://localhost:3000 with complete features
+- **Mobile App**: Running on iOS simulator with React Native 0.80.2
+- **Metro Server**: Running on port 8081 with monorepo configuration
+- **Shared Packages**: All properly linked and functional
+- **TypeScript**: Full type safety across the monorepo
+- **React Navigation**: Working perfectly with React 19 + RN 0.80
+- **Charts & Analytics**: Both web and mobile displaying correctly
+- **Error Boundaries**: Comprehensive error handling implemented
+- **Accessibility**: WCAG compliance with proper ARIA attributes
+- **Testing**: High test coverage across all packages
 
-- ✅ **Epic 1**: Project Setup & Foundation - COMPLETED
-- ✅ **Epic 2**: Core Infrastructure - COMPLETED  
-- ✅ **Epic 3**: Web Application - COMPLETED
-- ✅ **Epic 4**: Mobile Application - COMPLETED
-- ✅ **Epic 5**: Cross-Platform Consistency - COMPLETED
-- ✅ **Epic 6**: Senior-Level Enhancements - COMPLETED
-- ✅ **Epic 7**: Container/Presentation Pattern Implementation - COMPLETED
-- ✅ **Epic 8**: Missing Core Features - COMPLETED
-- ✅ **Epic 9**: Cross-Platform UI Consistency - IN PROGRESS
-- ✅ **Epic 10**: Accessibility & UX Improvements - IN PROGRESS
-- ✅ **Epic 11**: Code Quality & Cleanup - COMPLETED
-
-### Technical Status:
-- ✅ **Web App**: Running on http://localhost:3000 with complete features
-- ✅ **Mobile App**: Running on iOS simulator with React Native 0.80.2
-- ✅ **Metro Server**: Running on port 8081 with monorepo configuration
-- ✅ **Shared Packages**: All properly linked and functional
-- ✅ **TypeScript**: Full type safety across the monorepo
-- ✅ **React Navigation**: Working perfectly with React 19 + RN 0.80
-- ✅ **Charts & Analytics**: Both web and mobile displaying correctly
-
-## Epic 6: Senior-Level Enhancements - COMPLETED ✅
-
-### Features Implemented:
-- **Error Boundaries**: Comprehensive error handling with fallback UI and retry functionality
-- **Loading States**: Advanced skeleton loading components and loading state management
-- **Accessibility**: ARIA attributes, keyboard navigation, skip links, and live regions
-- **Performance**: Performance monitoring utilities and optimization tools
-- **Enhanced API Hooks**: Retry logic, timeout handling, and better error management
-- **Cross-Platform Consistency**: All enhancements work across web and mobile
-- **TypeScript Strict Mode**: Full type safety and comprehensive testing
-- **Senior-Level Architecture**: Production-ready code quality and patterns
-
-### Senior-Level Features:
+### 🏆 Senior-Level Features Implemented
 - **Error Boundary Implementation**: Catches JavaScript errors and displays user-friendly fallback UI
 - **Loading State Optimization**: Skeleton screens, slow loading indicators, and retry mechanisms
 - **Accessibility Enhancements**: WCAG compliance with proper ARIA attributes and keyboard navigation
@@ -303,66 +356,17 @@ npm run check-types --workspaces
 - **Enhanced Error Handling**: Comprehensive error states with retry functionality
 - **Production-Ready Code**: Senior-level patterns, comprehensive testing, and optimization
 
-## Epic 5: Cross-Platform Consistency - COMPLETED ✅
+## 🤝 Contributing
 
-### Container/Presentation Pattern Implementation:
-- **Shared Containers**: Business logic separated into reusable container components
-- **Platform-Specific Presentations**: UI components tailored for web and mobile
-- **Consistent Data Flow**: Same business logic used across both platforms
-- **Cross-Platform Testing**: Automated testing to verify consistency
+1. Make changes in the appropriate workspace
+2. Run tests: `npm run test`
+3. Run linting: `npm run lint`
+4. Format code: `npm run format`
 
-### Cross-Platform Features:
-- **Shared Business Logic**: DistributionsContainer, DashboardContainer, ChartsContainer, DistributionDetailContainer
-- **Consistent Data Management**: Same hooks, types, and utilities across platforms
-- **Unified API Layer**: Single mock API service used by both apps
-- **Performance Optimization**: Code deduplication and shared state management
+## 📝 License
 
-## Epic 4: Mobile Application - COMPLETED ✅
+This project is part of the Aidonic Challenge and demonstrates advanced React development patterns, cross-platform consistency, and production-ready code quality.
 
-### Features Implemented:
-- **Navigation**: Bottom tab navigation with stack navigation for distributions
-- **Dashboard**: Key metrics and recent distributions overview
-- **Distributions**: List with search, filtering, and infinite scrolling
-- **Distribution Details**: Comprehensive detail view with actions
-- **Charts**: Analytics dashboard with custom charts
-- **Profile**: User settings and app configuration
+---
 
-### Mobile-Specific Features:
-- Pull-to-refresh functionality
-- Dark mode support
-- Touch-optimized UI components
-- Mobile-optimized navigation
-- Responsive design for different screen sizes
-
-## Epic 11: Code Quality & Cleanup - COMPLETED ✅
-
-### Code Quality Improvements:
-- **Shared Components**: Refactored duplicated code into reusable Icon and ErrorDisplay components
-- **Naming Conventions**: Enforced consistent camelCase naming across the codebase
-- **Code Cleanup**: Removed obsolete test-epic*.js files and technical debt
-- **TypeScript Compliance**: Ensured all code follows strict TypeScript standards
-
-### Comprehensive Testing Suite:
-- **Unit Tests**: Complete test coverage for UI components (Button, Icon, ErrorDisplay, Card)
-- **Integration Tests**: Cross-container integration testing for shared business logic
-- **Hook Testing**: Comprehensive testing for all custom React hooks
-- **Mock API Testing**: Complete test coverage for API layer and data utilities
-- **Error Handling Tests**: Verified graceful error handling across all components
-
-### Testing Infrastructure:
-- **Jest Configuration**: Optimized test setup across all packages
-- **Testing Library**: React Testing Library for component and integration testing
-- **Test Coverage**: High coverage across business logic and UI components
-- **Mock Strategy**: Comprehensive mocking for external dependencies and APIs
-
-### Package-Level Testing:
-- **@aidonic/ui**: 31 tests covering all UI components and edge cases
-- **@aidonic/shared-hooks**: 6 tests for hook functionality and error handling
-- **@aidonic/shared-utils**: 5 tests for API layer and utilities
-- **@aidonic/shared-containers**: 6 integration tests for cross-platform business logic
-
-### Quality Standards Achieved:
-- **SOLID Principles**: Single responsibility, dependency injection, and interface segregation
-- **Clean Code**: Meaningful names, small functions, and DRY principles
-- **Testing Best Practices**: Comprehensive unit and integration testing
-- **Documentation**: Updated documentation to reflect architectural decisions
+**Built with ❤️ using Next.js 15, React Native 0.80.2, and modern development practices**

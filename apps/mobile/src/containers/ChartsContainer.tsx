@@ -13,7 +13,7 @@ interface ChartsContainerProps {
   navigation: ChartsScreenNavigationProp;
 }
 
-const ChartsContainer: React.FC<ChartsContainerProps> = ({ navigation }) => {
+const ChartsContainer = ({ navigation }: ChartsContainerProps) => {
   const { chartData, timeSeriesData, loading, error, refreshStats } =
     useStats();
 

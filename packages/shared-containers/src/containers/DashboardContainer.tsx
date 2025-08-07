@@ -1,22 +1,48 @@
 import React from "react";
 import { useDistributions } from "@aidonic/shared-hooks";
+import {
+  Distribution,
+  FilterOptions,
+  SearchOptions,
+  PaginatedResponse,
+} from "@aidonic/shared-types";
 
 export interface DashboardContainerState {
-  distributions: any[];
+  distributions: Distribution[];
   loading: boolean;
   error: string | null;
-  refreshData: () => Promise<void>;
+  pagination: PaginatedResponse<Distribution>["pagination"];
+  filters: FilterOptions;
+  search: SearchOptions;
+  regions: string[];
+  statuses: string[];
+  setFilters: (filters: FilterOptions) => void;
+  setSearch: (search: SearchOptions) => void;
+  setPage: (page: number) => void;
+  setLimit: (limit: number) => void;
+  refreshDistributions: () => Promise<void>;
 }
 
 interface DashboardContainerProps {
   children: (state: DashboardContainerState) => React.ReactNode;
 }
 
-const DashboardContainer: React.FC<DashboardContainerProps> = ({
-  children,
-}) => {
-  const { distributions, loading, error, refreshDistributions } =
-    useDistributions();
+const DashboardContainer = ({ children }: DashboardContainerProps) => {
+  const {
+    distributions,
+    loading,
+    error,
+    pagination,
+    filters,
+    search,
+    regions,
+    statuses,
+    setFilters,
+    setSearch,
+    setPage,
+    setLimit,
+    refreshDistributions,
+  } = useDistributions({ accumulateResults: true });
 
   return (
     <>
@@ -24,7 +50,16 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({
         distributions,
         loading,
         error,
-        refreshData: refreshDistributions,
+        pagination,
+        filters,
+        search,
+        regions,
+        statuses,
+        setFilters,
+        setSearch,
+        setPage,
+        setLimit,
+        refreshDistributions,
       })}
     </>
   );

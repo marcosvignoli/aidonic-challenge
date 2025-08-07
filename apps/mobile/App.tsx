@@ -27,7 +27,6 @@ import ChartsScreen from './src/screens/ChartsScreen';
 // Type definitions for navigation
 export type RootStackParamList = {
   MainTabs: undefined;
-  DistributionDetail: { distribution: Distribution };
 };
 
 export type MainTabParamList = {
@@ -73,6 +72,14 @@ function DistributionsStackNavigator() {
         options={({ route }) => ({
           title: route.params?.distribution?.region || 'Distribution Details',
           headerBackTitle: 'Back',
+          headerBackTitleVisible: true,
+          headerStyle: {
+            backgroundColor: colors.background.primary,
+          },
+          headerTintColor: colors.text.primary,
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
         })}
       />
     </DistributionsStack.Navigator>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 export type IconType =
   | "warning"
@@ -46,11 +46,7 @@ const sizeClasses = {
   xl: "h-12 w-12",
 };
 
-export const Icon: React.FC<IconProps> = ({
-  type,
-  className = "",
-  size = "md",
-}) => {
+export const Icon = memo(({ type, className = "", size = "md" }: IconProps) => {
   const sizeClass = sizeClasses[size];
   const combinedClassName = `${sizeClass} ${className}`.trim();
 
@@ -70,6 +66,8 @@ export const Icon: React.FC<IconProps> = ({
       />
     </svg>
   );
-};
+});
+
+Icon.displayName = "Icon";
 
 export default Icon;
