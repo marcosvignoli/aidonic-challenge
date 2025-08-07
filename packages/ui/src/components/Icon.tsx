@@ -1,5 +1,9 @@
 import React, { memo } from "react";
 
+/**
+ * Available icon types for the Icon component
+ * Each type corresponds to a specific SVG path for consistent iconography
+ */
 export type IconType =
   | "warning"
   | "document"
@@ -13,12 +17,23 @@ export type IconType =
   | "info"
   | "close";
 
+/**
+ * Props interface for the Icon component
+ * Defines all available props for customizing icon appearance
+ */
 interface IconProps {
+  /** Type of icon to display */
   type: IconType;
+  /** Additional CSS classes for custom styling */
   className?: string;
+  /** Size variant for the icon */
   size?: "sm" | "md" | "lg" | "xl";
 }
 
+/**
+ * SVG path definitions for each icon type
+ * Contains the actual SVG path data for consistent icon rendering
+ */
 const iconPaths: Record<IconType, string> = {
   warning:
     "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z",
@@ -39,6 +54,10 @@ const iconPaths: Record<IconType, string> = {
   close: "M6 18L18 6M6 6l12 12",
 };
 
+/**
+ * Size classes for different icon sizes
+ * Maps size variants to Tailwind CSS classes
+ */
 const sizeClasses = {
   sm: "h-4 w-4",
   md: "h-6 w-6",
@@ -46,7 +65,56 @@ const sizeClasses = {
   xl: "h-12 w-12",
 };
 
+/**
+ * Icon Component - SVG icon system
+ *
+ * A flexible icon component that provides consistent iconography across
+ * the application. Uses SVG paths for crisp, scalable icons with
+ * customizable sizes and styling.
+ *
+ * Features:
+ * - Consistent icon set with predefined types
+ * - Multiple size variants (sm, md, lg, xl)
+ * - SVG-based rendering for crisp display
+ * - Customizable styling with CSS classes
+ * - Accessibility-friendly with aria-hidden
+ * - Responsive design with currentColor support
+ * - Optimized for performance with memo
+ *
+ * Available Icons:
+ * - warning: Warning triangle icon
+ * - document: Document/file icon
+ * - user: User/profile icon
+ * - calendar: Calendar icon
+ * - building: Building/organization icon
+ * - chart: Bar chart icon
+ * - chevron-right: Right-pointing chevron
+ * - loading: Spinning loading icon
+ * - error: Error/circle icon
+ * - info: Information circle icon
+ * - close: X/close icon
+ *
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <Icon type="warning" />
+ *
+ * // With custom size
+ * <Icon type="user" size="lg" />
+ *
+ * // With custom styling
+ * <Icon
+ *   type="chart"
+ *   size="xl"
+ *   className="text-blue-500"
+ * />
+ *
+ * // Loading state
+ * <Icon type="loading" className="animate-spin" />
+ * ```
+ */
 export const Icon = memo(({ type, className = "", size = "md" }: IconProps) => {
+  // Get size class and combine with custom classes
   const sizeClass = sizeClasses[size];
   const combinedClassName = `${sizeClass} ${className}`.trim();
 

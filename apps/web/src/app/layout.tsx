@@ -4,13 +4,43 @@ import "./globals.css";
 import { SkipLink, LiveRegion, ErrorBoundary } from "@aidonic/ui";
 import Link from "next/link";
 
+/**
+ * Font configuration for the application
+ * Uses Inter font from Google Fonts for consistent typography
+ */
 const inter = Inter({ subsets: ["latin"] });
 
+/**
+ * Metadata configuration for the application
+ * Provides SEO and browser information
+ */
 export const metadata: Metadata = {
   title: "Aidonic Challenge - Distribution Dashboard",
   description: "Web dashboard for managing distributions",
 };
 
+/**
+ * Root Layout Component
+ *
+ * This is the main layout component that wraps all pages in the application.
+ * It provides:
+ * - HTML document structure with proper language attribute
+ * - Font configuration
+ * - Navigation header with accessibility features
+ * - Error boundary for graceful error handling
+ * - Skip links for keyboard navigation
+ * - Live regions for screen reader announcements
+ *
+ * The layout follows accessibility best practices including:
+ * - Proper ARIA labels and roles
+ * - Skip navigation links
+ * - Live regions for dynamic content
+ * - Semantic HTML structure
+ * - Focus management
+ *
+ * @param children - React children to be rendered within the layout
+ * @returns JSX element representing the complete page layout
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -19,12 +49,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        {/* Error Boundary - Catches and handles React errors gracefully */}
         <ErrorBoundary>
           <div className="min-h-screen bg-gray-50">
-            {/* Skip Link for Accessibility */}
+            {/* Skip Link for Accessibility - Allows keyboard users to skip navigation */}
             <SkipLink href="#main-content" />
 
-            {/* Live Region for Announcements */}
+            {/* Live Region for Announcements - Provides screen reader updates */}
             <LiveRegion role="status" ariaLive="polite">
               <div
                 id="announcements"
@@ -33,6 +64,7 @@ export default function RootLayout({
               ></div>
             </LiveRegion>
 
+            {/* Main Navigation Header */}
             <nav
               className="bg-white shadow-sm border-b"
               role="navigation"
@@ -40,6 +72,7 @@ export default function RootLayout({
             >
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
+                  {/* Logo/Brand Section */}
                   <div className="flex items-center">
                     <Link
                       href="/"
@@ -49,6 +82,8 @@ export default function RootLayout({
                       AC
                     </Link>
                   </div>
+
+                  {/* Navigation Menu */}
                   <div className="flex items-center space-x-4" role="menubar">
                     <Link
                       href="/"
@@ -76,6 +111,8 @@ export default function RootLayout({
                 </div>
               </div>
             </nav>
+
+            {/* Main Content Area */}
             <main id="main-content" role="main" tabIndex={-1}>
               {children}
             </main>

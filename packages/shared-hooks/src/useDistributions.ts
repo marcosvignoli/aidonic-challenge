@@ -9,35 +9,86 @@ import {
 } from "@aidonic/shared-types";
 import { mockApi } from "@aidonic/shared-utils";
 
+/**
+ * Return type for the useDistributions hook
+ * Provides all state and handlers for managing distributions list
+ */
 export interface UseDistributionsReturn {
+  /** Array of distribution records */
   distributions: Distribution[];
+  /** Loading state for async operations */
   loading: boolean;
+  /** Error message if operation failed, null if successful */
   error: string | null;
+  /** Pagination metadata and controls */
   pagination: PaginatedResponse<Distribution>["pagination"];
+  /** Current filter values */
   filters: FilterOptions;
+  /** Current search query */
   search: SearchOptions;
-  setFilters: (filters: FilterOptions) => void;
-  setSearch: (search: SearchOptions) => void;
-  setPage: (page: number) => void;
-  setLimit: (limit: number) => void;
-  refreshDistributions: () => Promise<void>;
+  /** Available regions for filtering */
   regions: string[];
+  /** Available statuses for filtering */
   statuses: string[];
+  /** Function to update filters */
+  setFilters: (filters: FilterOptions) => void;
+  /** Function to update search query */
+  setSearch: (search: SearchOptions) => void;
+  /** Function to change current page */
+  setPage: (page: number) => void;
+  /** Function to change items per page */
+  setLimit: (limit: number) => void;
+  /** Function to refresh distributions data */
+  refreshDistributions: () => Promise<void>;
 }
 
+/**
+ * Return type for the useDistributionDetail hook
+ * Provides state and handlers for managing a single distribution detail
+ */
 export interface UseDistributionDetailReturn {
+  /** Detailed distribution information including beneficiary list */
   distribution: DistributionDetail | null;
+  /** Loading state for async operations */
   loading: boolean;
+  /** Error message if operation failed, null if successful */
   error: string | null;
+  /** Function to refresh distribution detail data */
   refreshDistribution: () => Promise<void>;
 }
 
+/**
+ * Custom hook for managing distributions list with filtering, pagination, and search
+ *
+ * This hook implements the Container pattern by encapsulating all business logic
+ * for fetching, filtering, and managing distributions data. It provides a clean
+ * interface for presentation components to consume.
+ *
+ * @param options - Optional configuration for the hook behavior
+ * @param options.accumulateResults - When true, new results are appended to existing ones (useful for mobile "Load More" pattern)
+ *
+ * @example
+ * ```tsx
+ * // Basic usage
+ * const { distributions, loading, error, setFilters } = useDistributions();
+ *
+ * // With accumulation for mobile
+ * const { distributions, loading, error, setPage } = useDistributions({
+ *   accumulateResults: true
+ * });
+ * ```
+ *
+ * @returns UseDistributionsReturn object with all state and handlers
+ */
 export const useDistributions = (options?: {
   accumulateResults?: boolean;
 }): UseDistributionsReturn => {
+  // State for distributions data
   const [distributions, setDistributions] = useState<Distribution[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Pagination state with default values
   const [pagination, setPagination] = useState<
     PaginatedResponse<Distribution>["pagination"]
   >({
@@ -46,19 +97,28 @@ export const useDistributions = (options?: {
     total: 0,
     totalPages: 0,
   });
+
+  // Filter and search state
   const [filters, setFilters] = useState<FilterOptions>({
     region: "",
     status: "",
   });
   const [search, setSearch] = useState<SearchOptions>({ query: "" });
+
+  // Available filter options
   const [regions, setRegions] = useState<string[]>([]);
   const [statuses, setStatuses] = useState<string[]>([]);
 
+  /**
+   * Fetches distributions data from the API
+   * Handles filtering, pagination, and search parameters
+   */
   const fetchDistributions = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
+      // Build query parameters
       const params: DistributionsQueryParams = {
         filters,
         pagination: {
@@ -70,7 +130,7 @@ export const useDistributions = (options?: {
 
       const response = await mockApi.getDistributions(params);
 
-      // Accumulate results for mobile "Load More" pattern, or replace for web pagination
+      // Handle result accumulation for mobile "Load More" pattern
       if (options?.accumulateResults && pagination.page > 1) {
         setDistributions((prev) => [...prev, ...response.data]);
       } else {
@@ -92,6 +152,10 @@ export const useDistributions = (options?: {
     options?.accumulateResults,
   ]);
 
+  /**
+   * Fetches available filter options (regions and statuses)
+   * Used to populate filter dropdowns
+   */
   const fetchFilterOptions = useCallback(async () => {
     try {
       const [regionsData, statusesData] = await Promise.all([
@@ -105,10 +169,18 @@ export const useDistributions = (options?: {
     }
   }, []);
 
+  /**
+   * Refreshes distributions data
+   * Useful for pull-to-refresh functionality
+   */
   const refreshDistributions = useCallback(async () => {
     await fetchDistributions();
   }, [fetchDistributions]);
 
+  /**
+   * Updates filters and resets pagination
+   * Clears accumulated results when filters change (for mobile)
+   */
   const handleSetFilters = useCallback(
     (newFilters: FilterOptions) => {
       setFilters(newFilters);
@@ -120,6 +192,10 @@ export const useDistributions = (options?: {
     [options?.accumulateResults]
   );
 
+  /**
+   * Updates search query and resets pagination
+   * Clears accumulated results when search changes (for mobile)
+   */
   const handleSetSearch = useCallback(
     (newSearch: SearchOptions) => {
       setSearch(newSearch);
@@ -131,18 +207,26 @@ export const useDistributions = (options?: {
     [options?.accumulateResults]
   );
 
+  /**
+   * Updates current page number
+   */
   const handleSetPage = useCallback((page: number) => {
     setPagination((prev) => ({ ...prev, page }));
   }, []);
 
+  /**
+   * Updates items per page and resets to first page
+   */
   const handleSetLimit = useCallback((limit: number) => {
     setPagination((prev) => ({ ...prev, limit, page: 1 })); // Reset to first page when limit changes
   }, []);
 
+  // Fetch distributions when dependencies change
   useEffect(() => {
     fetchDistributions();
   }, [fetchDistributions]);
 
+  // Fetch filter options on mount
   useEffect(() => {
     fetchFilterOptions();
   }, [fetchFilterOptions]);
@@ -164,6 +248,34 @@ export const useDistributions = (options?: {
   };
 };
 
+/**
+ * Custom hook for managing a single distribution's detailed information
+ *
+ * This hook fetches and manages the detailed view of a specific distribution,
+ * including the list of beneficiaries. It follows the Container pattern by
+ * encapsulating the business logic for fetching distribution details.
+ *
+ * @param id - The unique identifier of the distribution to fetch
+ *
+ * @example
+ * ```tsx
+ * const { distribution, loading, error, refreshDistribution } = useDistributionDetail("dst--001");
+ *
+ * if (loading) return <LoadingSpinner />;
+ * if (error) return <ErrorMessage error={error} />;
+ * if (!distribution) return <NotFound />;
+ *
+ * return (
+ *   <div>
+ *     <h1>{distribution.region}</h1>
+ *     <p>Status: {distribution.status}</p>
+ *     <BeneficiaryList beneficiaries={distribution.beneficiaryList} />
+ *   </div>
+ * );
+ * ```
+ *
+ * @returns UseDistributionDetailReturn object with distribution detail state and handlers
+ */
 export const useDistributionDetail = (
   id: string
 ): UseDistributionDetailReturn => {
@@ -173,6 +285,9 @@ export const useDistributionDetail = (
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Fetches detailed distribution information including beneficiary list
+   */
   const fetchDistribution = async () => {
     try {
       setLoading(true);
@@ -188,10 +303,15 @@ export const useDistributionDetail = (
     }
   };
 
+  /**
+   * Refreshes distribution detail data
+   * Useful for pull-to-refresh functionality
+   */
   const refreshDistribution = async () => {
     await fetchDistribution();
   };
 
+  // Fetch distribution detail when ID changes
   useEffect(() => {
     if (id) {
       fetchDistribution();

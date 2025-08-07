@@ -12,6 +12,58 @@ import {
   PaginationState,
 } from "@aidonic/shared-types";
 
+/**
+ * DistributionsPresentation - Web Distribution List Component
+ *
+ * This presentation component implements the web interface for viewing and managing
+ * aid distributions. It provides a comprehensive table view with filtering,
+ * search, and pagination capabilities.
+ *
+ * Features:
+ * - Responsive table layout with sortable columns
+ * - Advanced filtering by region and status
+ * - Real-time search across multiple fields
+ * - Pagination with configurable page sizes
+ * - Keyboard shortcuts for power users
+ * - Accessibility features (ARIA labels, keyboard navigation)
+ * - Loading states and error handling
+ * - Click-to-navigate to distribution details
+ *
+ * Keyboard Shortcuts:
+ * - Cmd/Ctrl + K: Focus search input
+ * - Escape: Clear search query
+ * - Arrow keys: Navigate table rows
+ * - Enter: Open selected distribution
+ *
+ * @param distributions - Array of distribution records to display
+ * @param loading - Whether data is currently loading
+ * @param error - Error message if data fetch failed
+ * @param pagination - Pagination state and controls
+ * @param filters - Current filter values
+ * @param search - Current search query
+ * @param regions - Available regions for filtering
+ * @param statuses - Available statuses for filtering
+ * @param setFilters - Function to update filters
+ * @param setSearch - Function to update search
+ * @param setPage - Function to change current page
+ * @param setLimit - Function to change items per page
+ * @param refreshDistributions - Function to refresh data
+ *
+ * @example
+ * ```tsx
+ * <DistributionsContainer>
+ *   {({ distributions, loading, error, setFilters }) => (
+ *     <DistributionsPresentation
+ *       distributions={distributions}
+ *       loading={loading}
+ *       error={error}
+ *       setFilters={setFilters}
+ *       // ... other props
+ *     />
+ *   )}
+ * </DistributionsContainer>
+ * ```
+ */
 const DistributionsPresentation = memo(
   ({
     distributions,
@@ -31,6 +83,10 @@ const DistributionsPresentation = memo(
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState(search.query);
 
+    /**
+     * Handles search form submission
+     * Updates the search query and triggers data refresh
+     */
     const handleSearchSubmit = useCallback(
       (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,6 +95,10 @@ const DistributionsPresentation = memo(
       [searchQuery, setSearch]
     );
 
+    /**
+     * Handles region filter changes
+     * Updates the region filter and triggers data refresh
+     */
     const handleRegionChange = useCallback(
       (e: React.ChangeEvent<HTMLSelectElement>) => {
         setFilters({ ...filters, region: e.target.value });
@@ -46,6 +106,10 @@ const DistributionsPresentation = memo(
       [filters, setFilters]
     );
 
+    /**
+     * Handles status filter changes
+     * Updates the status filter and triggers data refresh
+     */
     const handleStatusChange = useCallback(
       (e: React.ChangeEvent<HTMLSelectElement>) => {
         setFilters({
@@ -56,6 +120,10 @@ const DistributionsPresentation = memo(
       [filters, setFilters]
     );
 
+    /**
+     * Handles pagination page changes
+     * Updates the current page and triggers data refresh
+     */
     const handlePageChange = useCallback(
       (page: number) => {
         setPage(page);
@@ -63,6 +131,10 @@ const DistributionsPresentation = memo(
       [setPage]
     );
 
+    /**
+     * Handles pagination limit changes
+     * Updates the items per page and resets to first page
+     */
     const handleLimitChange = useCallback(
       (e: React.ChangeEvent<HTMLSelectElement>) => {
         setLimit(Number(e.target.value));
@@ -70,6 +142,10 @@ const DistributionsPresentation = memo(
       [setLimit]
     );
 
+    /**
+     * Handles table row clicks
+     * Navigates to the distribution detail page
+     */
     const handleRowClick = useCallback(
       (distributionId: string) => {
         router.push(`/distributions/${distributionId}`);
@@ -77,7 +153,10 @@ const DistributionsPresentation = memo(
       [router]
     );
 
-    // Keyboard shortcuts
+    /**
+     * Sets up keyboard shortcuts for power users
+     * Provides quick access to common actions
+     */
     useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
         // Only handle shortcuts when not in form elements

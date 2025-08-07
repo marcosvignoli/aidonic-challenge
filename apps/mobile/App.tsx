@@ -1,6 +1,25 @@
 /**
  * Epic 4: Aidonic Mobile App with React Navigation
  * Professional mobile app showcasing React Navigation skills
+ *
+ * This file contains the main mobile application structure with React Navigation.
+ * It implements a tab-based navigation with stack navigation for distributions.
+ *
+ * Navigation Structure:
+ * - Root Stack Navigator (handles app-level navigation)
+ *   - Main Tab Navigator (bottom tabs)
+ *     - Dashboard Tab (main dashboard screen)
+ *     - Distributions Tab (stack navigator for distributions)
+ *       - Distributions List Screen
+ *       - Distribution Detail Screen
+ *     - Charts Tab (analytics and charts screen)
+ *
+ * Features:
+ * - Bottom tab navigation with custom icons
+ * - Stack navigation for distributions flow
+ * - Consistent styling across all screens
+ * - Type-safe navigation with TypeScript
+ * - Custom header styling and back navigation
  */
 
 import 'react-native-gesture-handler';
@@ -24,19 +43,41 @@ import DistributionsScreen from './src/screens/DistributionsScreen';
 import DistributionDetailScreen from './src/screens/DistributionDetailScreen';
 import ChartsScreen from './src/screens/ChartsScreen';
 
-// Type definitions for navigation
+/**
+ * Type definitions for navigation parameters
+ * Provides type safety for navigation throughout the app
+ */
+
+/**
+ * Root stack navigator parameter list
+ * Defines the main app-level navigation structure
+ */
 export type RootStackParamList = {
+  /** Main tabs container */
   MainTabs: undefined;
 };
 
+/**
+ * Main tab navigator parameter list
+ * Defines the bottom tab navigation structure
+ */
 export type MainTabParamList = {
+  /** Dashboard tab with main dashboard screen */
   Dashboard: undefined;
+  /** Distributions tab with optional stack navigation parameters */
   Distributions: NavigatorScreenParams<DistributionsStackParamList> | undefined;
+  /** Charts tab with analytics screen */
   Charts: undefined;
 };
 
+/**
+ * Distributions stack navigator parameter list
+ * Defines the stack navigation for distributions flow
+ */
 export type DistributionsStackParamList = {
+  /** List of all distributions */
   DistributionsList: undefined;
+  /** Detail view for a specific distribution */
   DistributionDetail: { distribution: Distribution };
 };
 
@@ -45,7 +86,21 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
 const DistributionsStack = createStackNavigator<DistributionsStackParamList>();
 
-// Distributions Stack Navigator
+/**
+ * Distributions Stack Navigator Component
+ *
+ * Handles the stack navigation for the distributions flow, including
+ * the distributions list and detail screens. Provides consistent
+ * header styling and navigation behavior.
+ *
+ * Features:
+ * - Consistent header styling with app theme
+ * - Dynamic title based on distribution data
+ * - Proper back navigation with custom back title
+ * - Type-safe navigation parameters
+ *
+ * @returns JSX element representing the distributions stack navigator
+ */
 function DistributionsStackNavigator() {
   return (
     <DistributionsStack.Navigator
@@ -86,7 +141,20 @@ function DistributionsStackNavigator() {
   );
 }
 
-// Main Tab Navigator
+/**
+ * Main Tab Navigator Component
+ *
+ * Handles the bottom tab navigation for the main app sections.
+ * Provides custom tab icons, styling, and navigation behavior.
+ *
+ * Features:
+ * - Custom tab icons with focused/unfocused states
+ * - Consistent styling with app theme
+ * - Type-safe navigation
+ * - Custom tab bar styling and positioning
+ *
+ * @returns JSX element representing the main tab navigator
+ */
 function MainTabNavigator() {
   return (
     <Tab.Navigator
@@ -94,6 +162,7 @@ function MainTabNavigator() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: string;
 
+          // Determine icon based on route name and focus state
           switch (route.name) {
             case 'Dashboard':
               iconName = focused ? 'home' : 'home-outline';
@@ -160,7 +229,14 @@ function MainTabNavigator() {
   );
 }
 
-// Root Navigator
+/**
+ * Root Navigator Component
+ *
+ * The top-level navigator that wraps the entire app navigation.
+ * Provides the main app structure and handles app-level navigation.
+ *
+ * @returns JSX element representing the root navigator
+ */
 function RootNavigator() {
   return (
     <Stack.Navigator>
@@ -173,7 +249,20 @@ function RootNavigator() {
   );
 }
 
-// Main App Component
+/**
+ * Main App Component
+ *
+ * The root component of the mobile application. Sets up the navigation
+ * container, status bar, and overall app structure.
+ *
+ * Features:
+ * - Navigation container setup
+ * - Status bar configuration
+ * - Root navigator integration
+ * - App-level styling and configuration
+ *
+ * @returns JSX element representing the complete mobile application
+ */
 function App(): React.JSX.Element {
   return (
     <>
