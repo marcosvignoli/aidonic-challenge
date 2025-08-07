@@ -1,5 +1,5 @@
 import React from "react";
-import { colors, borderRadius } from "../design-tokens";
+import { colors } from "../design-tokens";
 
 export interface AvatarProps {
   src?: string;

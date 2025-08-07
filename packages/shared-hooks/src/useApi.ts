@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { ApiResponse } from "@aidonic/shared-types";
 
-interface UseApiOptions<T> {
+interface UseApiOptions {
   url: string;
   method?: "GET" | "POST" | "PUT" | "DELETE";
-  body?: any;
+  body?: unknown;
   headers?: Record<string, string>;
   immediate?: boolean;
   timeout?: number;
@@ -24,7 +24,7 @@ interface UseApiResult<T> {
   retryCount: number;
 }
 
-export function useApi<T>(options: UseApiOptions<T>): UseApiResult<T> {
+export function useApi<T>(options: UseApiOptions): UseApiResult<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

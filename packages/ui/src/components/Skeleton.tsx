@@ -1,4 +1,5 @@
 import React from "react";
+import { semanticClasses } from "../styling-utils";
 
 export interface SkeletonProps {
   className?: string;
@@ -15,7 +16,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   height,
   animation = "pulse",
 }) => {
-  const baseClasses = "bg-gray-200 rounded";
+  const baseClasses = `${semanticClasses.loadingBg} rounded`;
 
   const animationClasses = {
     pulse: "animate-pulse",
@@ -88,7 +89,9 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({
   textLines = 3,
 }) => {
   return (
-    <div className={`bg-white rounded-lg shadow p-4 ${className}`}>
+    <div
+      className={`${semanticClasses.bgPrimary} rounded-lg shadow p-4 ${className}`}
+    >
       {showImage && (
         <Skeleton variant="rectangular" className="w-full h-32 mb-4" />
       )}
@@ -112,16 +115,20 @@ export const SkeletonTable: React.FC<SkeletonTableProps> = ({
   showHeader = true,
 }) => {
   return (
-    <div className={`bg-white rounded-lg shadow ${className}`}>
+    <div
+      className={`${semanticClasses.bgPrimary} rounded-lg shadow ${className}`}
+    >
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table
+          className={`min-w-full divide-y ${semanticClasses.borderPrimary}`}
+        >
           {showHeader && (
-            <thead className="bg-gray-50">
+            <thead className={semanticClasses.tableBg}>
               <tr>
                 {Array.from({ length: columns }, (_, index) => (
                   <th
                     key={index}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className={`px-6 py-3 text-left text-xs font-medium ${semanticClasses.textSecondary} uppercase tracking-wider`}
                   >
                     <Skeleton variant="text" className="h-4 w-20" />
                   </th>
@@ -129,7 +136,9 @@ export const SkeletonTable: React.FC<SkeletonTableProps> = ({
               </tr>
             </thead>
           )}
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody
+            className={`${semanticClasses.bgPrimary} divide-y ${semanticClasses.borderPrimary}`}
+          >
             {Array.from({ length: rows }, (_, rowIndex) => (
               <tr key={rowIndex}>
                 {Array.from({ length: columns }, (_, colIndex) => (

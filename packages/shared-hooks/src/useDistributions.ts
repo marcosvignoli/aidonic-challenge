@@ -3,7 +3,6 @@ import {
   Distribution,
   DistributionDetail,
   FilterOptions,
-  PaginationOptions,
   SearchOptions,
   DistributionsQueryParams,
   PaginatedResponse,
@@ -43,7 +42,7 @@ export const useDistributions = (options?: {
     PaginatedResponse<Distribution>["pagination"]
   >({
     page: 1,
-    limit: options?.accumulateResults ? 3 : 10, // Smaller limit for mobile "Load More"
+    limit: options?.accumulateResults ? 10 : 10, // Show more distributions initially on mobile
     total: 0,
     totalPages: 0,
   });

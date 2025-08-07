@@ -1,17 +1,20 @@
 import React from 'react';
 import {
   View,
-  Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  useColorScheme,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
+import {
+  createBaseStyles,
+  ButtonRN,
+  TextRN,
+  StatusBadgeRN,
+} from '@aidonic/ui/react-native';
 import { MainTabParamList, DistributionsStackParamList } from '../../App';
 
 type DashboardScreenNavigationProp = CompositeNavigationProp<
@@ -34,80 +37,16 @@ const DashboardPresentation: React.FC<DashboardPresentationProps> = ({
   error,
   refreshData,
 }) => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Completed':
-        return '#10B981';
-      case 'In Progress':
-        return '#F59E0B';
-      case 'Planned':
-        return '#3B82F6';
-      default:
-        return '#6B7280';
-    }
-  };
-
-  const getStatusBackgroundColor = (status: string) => {
-    switch (status) {
-      case 'Completed':
-        return isDarkMode ? '#064E3B' : '#D1FAE5';
-      case 'In Progress':
-        return isDarkMode ? '#78350F' : '#FEF3C7';
-      case 'Planned':
-        return isDarkMode ? '#1E3A8A' : '#DBEAFE';
-      default:
-        return isDarkMode ? '#374151' : '#F3F4F6';
-    }
-  };
+  const baseStyles = createBaseStyles();
 
   if (error) {
     return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
-        ]}
-      >
-        <View style={styles.errorContainer}>
-          <Icon
-            name="alert-circle-outline"
-            size={48}
-            color={isDarkMode ? '#FFFFFF' : '#000000'}
-          />
-          <Text
-            style={[
-              styles.errorTitle,
-              { color: isDarkMode ? '#FFFFFF' : '#000000' },
-            ]}
-          >
-            Error Loading Data
-          </Text>
-          <Text
-            style={[
-              styles.errorMessage,
-              { color: isDarkMode ? '#8E8E93' : '#666666' },
-            ]}
-          >
-            {error}
-          </Text>
-          <TouchableOpacity
-            style={[
-              styles.retryButton,
-              { backgroundColor: isDarkMode ? '#2C2C2E' : '#FFFFFF' },
-            ]}
-            onPress={refreshData}
-          >
-            <Text
-              style={[
-                styles.retryButtonText,
-                { color: isDarkMode ? '#FFFFFF' : '#000000' },
-              ]}
-            >
-              Retry
-            </Text>
-          </TouchableOpacity>
+      <View style={baseStyles.container}>
+        <View style={baseStyles.errorContainer}>
+          <Icon name="alert-circle-outline" size={48} color="#000000" />
+          <TextRN variant="headingMedium">Error Loading Data</TextRN>
+          <TextRN variant="bodyMedium">{error}</TextRN>
+          <ButtonRN title="Retry" onPress={refreshData} variant="secondary" />
         </View>
       </View>
     );
@@ -115,99 +54,46 @@ const DashboardPresentation: React.FC<DashboardPresentationProps> = ({
 
   return (
     <ScrollView
-      style={[
-        styles.container,
-        { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
-      ]}
-      contentContainerStyle={styles.content}
+      style={baseStyles.container}
+      contentContainerStyle={baseStyles.content}
       refreshControl={
         <RefreshControl refreshing={loading} onRefresh={refreshData} />
       }
     >
       {/* Header */}
-      <View style={styles.header}>
-        <Text
-          style={[styles.title, { color: isDarkMode ? '#FFFFFF' : '#000000' }]}
-        >
-          Aid Distributions
-        </Text>
-        <Text
-          style={[
-            styles.subtitle,
-            { color: isDarkMode ? '#8E8E93' : '#666666' },
-          ]}
-        >
+      <View style={{ marginBottom: 24 }}>
+        <TextRN variant="headingLarge">Aid Distributions</TextRN>
+        <TextRN variant="bodyMedium">
           Monitor and manage your distribution activities
-        </Text>
+        </TextRN>
       </View>
 
       {/* Distributions List */}
       {loading && distributions.length === 0 ? (
-        <View style={styles.loadingContainer}>
+        <View style={{ marginBottom: 24 }}>
           {Array.from({ length: 3 }, (_, i) => (
-            <View
-              key={i}
-              style={[
-                styles.loadingCard,
-                { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-              ]}
-            >
-              <View style={styles.loadingContent}>
-                <View
-                  style={[
-                    styles.loadingLine,
-                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.loadingLine,
-                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.loadingLine,
-                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
-                  ]}
-                />
+            <View key={i} style={baseStyles.loadingCard}>
+              <View style={{ gap: 8 }}>
+                <View style={baseStyles.loadingLine} />
+                <View style={baseStyles.loadingLine} />
+                <View style={baseStyles.loadingLine} />
               </View>
             </View>
           ))}
         </View>
       ) : distributions.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Icon
-            name="document-outline"
-            size={48}
-            color={isDarkMode ? '#8E8E93' : '#C7C7CC'}
-          />
-          <Text
-            style={[
-              styles.emptyTitle,
-              { color: isDarkMode ? '#FFFFFF' : '#000000' },
-            ]}
-          >
-            No Distributions
-          </Text>
-          <Text
-            style={[
-              styles.emptyMessage,
-              { color: isDarkMode ? '#8E8E93' : '#666666' },
-            ]}
-          >
+        <View style={baseStyles.emptyContainer}>
+          <Icon name="document-outline" size={48} color="#C7C7CC" />
+          <TextRN variant="headingMedium">No Distributions</TextRN>
+          <TextRN variant="bodyMedium">
             No distributions have been created yet
-          </Text>
+          </TextRN>
         </View>
       ) : (
-        <View style={styles.distributionsContainer}>
+        <View style={{ marginBottom: 24 }}>
           {distributions.slice(0, 6).map(distribution => (
             <TouchableOpacity
               key={distribution.id}
-              style={[
-                styles.distributionCard,
-                { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-              ]}
               onPress={() =>
                 navigation.navigate('Distributions', {
                   screen: 'DistributionDetail',
@@ -215,93 +101,61 @@ const DashboardPresentation: React.FC<DashboardPresentationProps> = ({
                 })
               }
             >
-              <View style={styles.cardHeader}>
-                <View style={styles.cardTitleContainer}>
-                  <Text
-                    style={[
-                      styles.cardTitle,
-                      { color: isDarkMode ? '#FFFFFF' : '#000000' },
-                    ]}
-                  >
-                    {distribution.region}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.cardSubtitle,
-                      { color: isDarkMode ? '#8E8E93' : '#666666' },
-                    ]}
-                  >
-                    {distribution.beneficiaries} beneficiaries
-                  </Text>
+              <View>
+                <View style={baseStyles.cardHeader}>
+                  <View style={{ flex: 1 }}>
+                    <TextRN variant="headingSmall">
+                      {distribution.region}
+                    </TextRN>
+                    <TextRN variant="bodySmall">
+                      {distribution.beneficiaries} beneficiaries
+                    </TextRN>
+                  </View>
+                  <StatusBadgeRN status={distribution.status} />
                 </View>
-                <View
-                  style={[
-                    styles.statusBadge,
-                    {
-                      backgroundColor: getStatusBackgroundColor(
-                        distribution.status,
-                      ),
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.statusText,
-                      { color: getStatusColor(distribution.status) },
-                    ]}
-                  >
-                    {distribution.status}
-                  </Text>
-                </View>
-              </View>
 
-              <View style={styles.cardDetails}>
-                <View style={styles.detailRow}>
-                  <Icon
-                    name="calendar-outline"
-                    size={16}
-                    color={isDarkMode ? '#8E8E93' : '#666666'}
-                  />
-                  <Text
+                <View style={baseStyles.cardContent}>
+                  <View
                     style={[
-                      styles.detailText,
-                      { color: isDarkMode ? '#8E8E93' : '#666666' },
+                      baseStyles.listItem,
+                      {
+                        paddingHorizontal: 0,
+                        paddingVertical: 4,
+                        borderBottomWidth: 0,
+                      },
                     ]}
                   >
-                    {new Date(distribution.date).toLocaleDateString()}
-                  </Text>
-                </View>
-                <View style={styles.detailRow}>
-                  <Icon
-                    name="cube-outline"
-                    size={16}
-                    color={isDarkMode ? '#8E8E93' : '#666666'}
-                  />
-                  <Text
+                    <Icon name="calendar-outline" size={16} color="#666666" />
+                    <TextRN variant="bodySmall" style={{ marginLeft: 8 }}>
+                      {new Date(distribution.date).toLocaleDateString()}
+                    </TextRN>
+                  </View>
+                  <View
                     style={[
-                      styles.detailText,
-                      { color: isDarkMode ? '#8E8E93' : '#666666' },
+                      baseStyles.listItem,
+                      {
+                        paddingHorizontal: 0,
+                        paddingVertical: 4,
+                        borderBottomWidth: 0,
+                      },
                     ]}
                   >
-                    {distribution.aidType}
-                  </Text>
+                    <Icon name="cube-outline" size={16} color="#666666" />
+                    <TextRN variant="bodySmall" style={{ marginLeft: 8 }}>
+                      {distribution.aidType}
+                    </TextRN>
+                  </View>
                 </View>
-              </View>
 
-              <View style={styles.cardFooter}>
-                <Text
-                  style={[
-                    styles.viewDetailsText,
-                    { color: isDarkMode ? '#007AFF' : '#007AFF' },
-                  ]}
-                >
-                  View Details
-                </Text>
-                <Icon
-                  name="chevron-forward"
-                  size={16}
-                  color={isDarkMode ? '#007AFF' : '#007AFF'}
-                />
+                <View style={baseStyles.cardFooter}>
+                  <TextRN
+                    variant="bodyMedium"
+                    style={{ fontWeight: '500', color: '#007AFF' }}
+                  >
+                    View Details
+                  </TextRN>
+                  <Icon name="chevron-forward" size={16} color="#007AFF" />
+                </View>
               </View>
             </TouchableOpacity>
           ))}
@@ -310,148 +164,5 @@ const DashboardPresentation: React.FC<DashboardPresentationProps> = ({
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-  },
-  loadingContainer: {
-    marginBottom: 24,
-  },
-  loadingCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  loadingContent: {
-    gap: 8,
-  },
-  loadingLine: {
-    height: 16,
-    borderRadius: 4,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    paddingVertical: 48,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  emptyMessage: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  distributionsContainer: {
-    marginBottom: 24,
-  },
-  distributionCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12,
-  },
-  cardTitleContainer: {
-    flex: 1,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  cardSubtitle: {
-    fontSize: 14,
-  },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  cardDetails: {
-    marginBottom: 12,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  detailText: {
-    fontSize: 14,
-    marginLeft: 8,
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  viewDetailsText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  errorTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  errorMessage: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  retryButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#007AFF',
-  },
-  retryButtonText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-});
 
 export default DashboardPresentation;

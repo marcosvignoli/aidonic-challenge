@@ -1,0 +1,21 @@
+export default {
+  preset: "ts-jest",
+  testEnvironment: "jsdom",
+  roots: ["<rootDir>/src"],
+  testMatch: ["**/__tests__/**/*.test.tsx", "**/__tests__/**/*.test.ts"],
+  transform: {
+    "^.+\\.tsx?$": "ts-jest",
+  },
+  moduleNameMapper: {
+    "^@aidonic/shared-types$": "<rootDir>/../shared-types/src/index.ts",
+    "^@aidonic/shared-utils$": "<rootDir>/../shared-utils/src/index.ts",
+    "^@aidonic/shared-hooks$": "<rootDir>/../shared-hooks/src/index.ts",
+  },
+  setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "!src/**/*.d.ts",
+    "!src/index.ts",
+  ],
+};

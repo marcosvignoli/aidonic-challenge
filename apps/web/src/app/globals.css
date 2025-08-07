@@ -6,9 +6,9 @@
   --background-secondary: #f8fafc;
   --background-tertiary: #f1f5f9;
 
-  --text-primary: #171717;
-  --text-secondary: #525252;
-  --text-tertiary: #737373;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-tertiary: #8e8e93;
   --text-inverse: #ffffff;
 
   --border-primary: #e5e5e5;
@@ -74,30 +74,6 @@
   --error-700: #b91c1c;
   --error-800: #991b1b;
   --error-900: #7f1d1d;
-}
-
-@theme inline {
-  --color-background: var(--background-primary);
-  --color-foreground: var(--text-primary);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-primary: #0a0a0a;
-    --background-secondary: #171717;
-    --background-tertiary: #262626;
-
-    --text-primary: #ededed;
-    --text-secondary: #a3a3a3;
-    --text-tertiary: #737373;
-    --text-inverse: #171717;
-
-    --border-primary: #404040;
-    --border-secondary: #525252;
-    --border-focus: #60a5fa;
-  }
 }
 
 /* Base styles with proper contrast */

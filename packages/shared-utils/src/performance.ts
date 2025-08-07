@@ -5,7 +5,7 @@ interface PerformanceMetric {
   startTime: number;
   endTime?: number;
   duration?: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface PerformanceObserver {
@@ -16,7 +16,7 @@ class PerformanceMonitor {
   private metrics: Map<string, PerformanceMetric> = new Map();
   private observers: PerformanceObserver[] = [];
 
-  startTimer(name: string, metadata?: Record<string, any>): void {
+  startTimer(name: string, metadata?: Record<string, unknown>): void {
     const metric: PerformanceMetric = {
       name,
       startTime: performance.now(),
@@ -111,19 +111,17 @@ export function withPerformanceMonitoring<T extends React.ComponentType<any>>(
 }
 
 // Debounced function with performance tracking
-export function debounceWithPerformance<T extends (...args: any[]) => any>(
-  func: T,
-  delay: number,
-  name: string
-): T {
+export function debounceWithPerformance<
+  T extends (...args: unknown[]) => unknown,
+>(func: T, delay: number, name: string): T {
   let timeoutId: ReturnType<typeof setTimeout>;
 
-  return ((...args: any[]) => {
+  return ((...args: unknown[]) => {
     clearTimeout(timeoutId);
 
     timeoutId = setTimeout(() => {
       const startTime = performance.now();
-      const result = func(...args);
+      const result = func(...(args as Parameters<T>));
       const endTime = performance.now();
 
       console.log(`${name} executed in ${(endTime - startTime).toFixed(2)}ms`);

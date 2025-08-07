@@ -1,11 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import type {
-  Distribution,
-  DistributionDetail,
-  ApiResponse,
-  PaginatedResponse,
-} from "@aidonic/shared-types";
+import type { Distribution, DistributionDetail } from "@aidonic/shared-types";
 import { mockApi } from "./mockApi";
 
 // Store state interface
@@ -80,7 +75,7 @@ const initialState = {
 // Create Zustand store
 export const useDistributionStore = create<DistributionState>()(
   devtools(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
 
       // Fetch distributions
@@ -174,13 +169,17 @@ export const useDistributionStore = create<DistributionState>()(
       },
 
       // Set filters
-      setFilters: (filters: any) => {
+      setFilters: (filters: {
+        status?: string;
+        recipientId?: string;
+        search?: string;
+      }) => {
         set({ filters });
       },
 
       // Clear all errors
       clearErrors: () => {
-        set((state) => ({
+        set(() => ({
           errors: {
             distributions: null,
             distribution: null,

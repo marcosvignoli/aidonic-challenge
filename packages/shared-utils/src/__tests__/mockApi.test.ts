@@ -1,5 +1,4 @@
 import { mockApi } from "../mockApi";
-import type { Distribution } from "@aidonic/shared-types";
 
 describe("MockApi", () => {
   beforeEach(() => {

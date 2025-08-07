@@ -11,8 +11,9 @@ import {
 } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { StatusBar, useColorScheme } from 'react-native';
+import { StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { colors } from '@aidonic/ui/react-native';
 
 // Import shared packages
 import { Distribution } from '@aidonic/shared-types';
@@ -47,15 +48,13 @@ const DistributionsStack = createStackNavigator<DistributionsStackParamList>();
 
 // Distributions Stack Navigator
 function DistributionsStackNavigator() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <DistributionsStack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF',
+          backgroundColor: colors.background.primary,
         },
-        headerTintColor: isDarkMode ? '#FFFFFF' : '#000000',
+        headerTintColor: colors.text.primary,
         headerTitleStyle: {
           fontWeight: 'bold',
         },
@@ -82,8 +81,6 @@ function DistributionsStackNavigator() {
 
 // Main Tab Navigator
 function MainTabNavigator() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -106,24 +103,27 @@ function MainTabNavigator() {
 
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: isDarkMode ? '#8E8E93' : '#666666',
+        tabBarActiveTintColor: colors.primary[500],
+        tabBarInactiveTintColor: colors.text.secondary,
         headerStyle: {
-          backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF',
+          backgroundColor: colors.background.primary,
         },
-        headerTintColor: isDarkMode ? '#FFFFFF' : '#000000',
+        headerTintColor: colors.text.primary,
         headerTitleStyle: {
           fontWeight: 'bold',
         },
         tabBarStyle: {
-          backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF',
-          borderTopColor: isDarkMode ? '#38383A' : '#E5E5EA',
-          paddingBottom: 5,
-          height: 85,
+          backgroundColor: colors.background.primary,
+          borderTopColor: colors.border.primary,
+          paddingBottom: 8,
+          paddingTop: 8,
+          height: 90,
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: '500',
+          fontWeight: '600',
+          marginTop: 4,
+          marginBottom: 4,
         },
       })}
     >
@@ -168,11 +168,9 @@ function RootNavigator() {
 
 // Main App Component
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
       <NavigationContainer>
         <RootNavigator />
       </NavigationContainer>

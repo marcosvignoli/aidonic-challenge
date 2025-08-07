@@ -2,14 +2,13 @@ import React from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
-  TouchableOpacity,
   RefreshControl,
-  useColorScheme,
+  StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { createBaseStyles, ButtonRN, TextRN } from '@aidonic/ui/react-native';
 import { MainTabParamList } from '../../App';
 
 type ChartsScreenNavigationProp = BottomTabNavigationProp<
@@ -27,74 +26,37 @@ interface ChartsPresentationProps {
 }
 
 const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
-  navigation,
   chartData,
   timeSeriesData,
   loading,
   error,
   refreshStats,
 }) => {
-  const isDarkMode = useColorScheme() === 'dark';
+  const baseStyles = createBaseStyles();
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Completed':
-        return '#10B981';
+        return '#059669';
       case 'In Progress':
-        return '#F59E0B';
+        return '#D97706';
       case 'Planned':
-        return '#3B82F6';
+        return '#2563EB';
       default:
-        return '#6B7280';
+        return '#374151';
     }
   };
 
   if (error) {
     return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
-        ]}
-      >
+      <View style={baseStyles.container}>
         <View style={styles.errorContainer}>
-          <Icon
-            name="alert-circle-outline"
-            size={48}
-            color={isDarkMode ? '#FFFFFF' : '#000000'}
-          />
-          <Text
-            style={[
-              styles.errorTitle,
-              { color: isDarkMode ? '#FFFFFF' : '#000000' },
-            ]}
-          >
-            Error Loading Data
-          </Text>
-          <Text
-            style={[
-              styles.errorMessage,
-              { color: isDarkMode ? '#8E8E93' : '#666666' },
-            ]}
-          >
-            {error}
-          </Text>
-          <TouchableOpacity
-            style={[
-              styles.retryButton,
-              { backgroundColor: isDarkMode ? '#2C2C2E' : '#FFFFFF' },
-            ]}
-            onPress={refreshStats}
-          >
-            <Text
-              style={[
-                styles.retryButtonText,
-                { color: isDarkMode ? '#FFFFFF' : '#000000' },
-              ]}
-            >
-              Retry
-            </Text>
-          </TouchableOpacity>
+          <Icon name="alert-circle-outline" size={48} color={'#000000'} />
+          <TextRN variant="headingMedium">Error Loading Data</TextRN>
+          <TextRN variant="bodyMedium">{error}</TextRN>
+          <ButtonRN onPress={refreshStats} variant="secondary">
+            Retry
+          </ButtonRN>
         </View>
       </View>
     );
@@ -102,45 +64,15 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
 
   return (
     <ScrollView
-      style={[
-        styles.container,
-        { backgroundColor: isDarkMode ? '#000000' : '#F2F2F7' },
-      ]}
+      style={[baseStyles.container, { backgroundColor: '#F2F2F7' }]}
       contentContainerStyle={styles.content}
       refreshControl={
         <RefreshControl refreshing={loading} onRefresh={refreshStats} />
       }
     >
-      {/* Header */}
-      <View style={styles.header}>
-        <Text
-          style={[styles.title, { color: isDarkMode ? '#FFFFFF' : '#000000' }]}
-        >
-          Analytics
-        </Text>
-        <Text
-          style={[
-            styles.subtitle,
-            { color: isDarkMode ? '#8E8E93' : '#666666' },
-          ]}
-        >
-          View distribution statistics and trends
-        </Text>
-      </View>
-
       {/* Summary Stats */}
-      <View
-        style={[
-          styles.summaryCard,
-          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-        ]}
-      >
-        <Text
-          style={[
-            styles.cardTitle,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
+      <View style={[styles.summaryCard, { backgroundColor: '#FFFFFF' }]}>
+        <Text style={[styles.cardTitle, { color: '#000000' }]}>
           Summary Statistics
         </Text>
         {loading ? (
@@ -148,16 +80,10 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
             {Array.from({ length: 3 }, (_, i) => (
               <View key={i} style={styles.loadingStat}>
                 <View
-                  style={[
-                    styles.loadingLine,
-                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
-                  ]}
+                  style={[styles.loadingLine, { backgroundColor: '#E5E5EA' }]}
                 />
                 <View
-                  style={[
-                    styles.loadingLine,
-                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
-                  ]}
+                  style={[styles.loadingLine, { backgroundColor: '#E5E5EA' }]}
                 />
               </View>
             ))}
@@ -168,17 +94,12 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
               <Text
                 style={[
                   styles.statValue,
-                  { color: isDarkMode ? '#FFFFFF' : '#000000' },
+                  { color: '#3B82F6' }, // Blue for Total Distributions
                 ]}
               >
                 {chartData.reduce((sum, item) => sum + item.count, 0)}
               </Text>
-              <Text
-                style={[
-                  styles.statLabel,
-                  { color: isDarkMode ? '#8E8E93' : '#666666' },
-                ]}
-              >
+              <Text style={[styles.statLabel, { color: '#666666' }]}>
                 Total Distributions
               </Text>
             </View>
@@ -186,18 +107,13 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
               <Text
                 style={[
                   styles.statValue,
-                  { color: isDarkMode ? '#FFFFFF' : '#000000' },
+                  { color: '#10B981' }, // Green for Completed
                 ]}
               >
                 {chartData.find(item => item.status === 'Completed')?.count ||
                   0}
               </Text>
-              <Text
-                style={[
-                  styles.statLabel,
-                  { color: isDarkMode ? '#8E8E93' : '#666666' },
-                ]}
-              >
+              <Text style={[styles.statLabel, { color: '#666666' }]}>
                 Completed
               </Text>
             </View>
@@ -205,17 +121,12 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
               <Text
                 style={[
                   styles.statValue,
-                  { color: isDarkMode ? '#FFFFFF' : '#000000' },
+                  { color: '#F59E0B' }, // Yellow/Orange for Active Days
                 ]}
               >
                 {timeSeriesData.length}
               </Text>
-              <Text
-                style={[
-                  styles.statLabel,
-                  { color: isDarkMode ? '#8E8E93' : '#666666' },
-                ]}
-              >
+              <Text style={[styles.statLabel, { color: '#666666' }]}>
                 Active Days
               </Text>
             </View>
@@ -224,18 +135,8 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
       </View>
 
       {/* Status Distribution */}
-      <View
-        style={[
-          styles.chartCard,
-          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-        ]}
-      >
-        <Text
-          style={[
-            styles.cardTitle,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
+      <View style={[styles.chartCard, { backgroundColor: '#FFFFFF' }]}>
+        <Text style={[styles.cardTitle, { color: '#000000' }]}>
           Distributions by Status
         </Text>
         {loading ? (
@@ -243,33 +144,18 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
             {Array.from({ length: 4 }, (_, i) => (
               <View key={i} style={styles.loadingChartItem}>
                 <View
-                  style={[
-                    styles.loadingCircle,
-                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
-                  ]}
+                  style={[styles.loadingCircle, { backgroundColor: '#E5E5EA' }]}
                 />
                 <View
-                  style={[
-                    styles.loadingLine,
-                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
-                  ]}
+                  style={[styles.loadingLine, { backgroundColor: '#E5E5EA' }]}
                 />
               </View>
             ))}
           </View>
         ) : chartData.length === 0 ? (
           <View style={styles.emptyChart}>
-            <Icon
-              name="pie-chart-outline"
-              size={48}
-              color={isDarkMode ? '#8E8E93' : '#C7C7CC'}
-            />
-            <Text
-              style={[
-                styles.emptyChartText,
-                { color: isDarkMode ? '#8E8E93' : '#666666' },
-              ]}
-            >
+            <Icon name="pie-chart-outline" size={48} color={'#C7C7CC'} />
+            <Text style={[styles.emptyChartText, { color: '#666666' }]}>
               No data available
             </Text>
           </View>
@@ -284,12 +170,7 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
                       { backgroundColor: getStatusColor(item.status) },
                     ]}
                   />
-                  <Text
-                    style={[
-                      styles.statusName,
-                      { color: isDarkMode ? '#FFFFFF' : '#000000' },
-                    ]}
-                  >
+                  <Text style={[styles.statusName, { color: '#000000' }]}>
                     {item.status}
                   </Text>
                 </View>
@@ -308,12 +189,7 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
                     ]}
                   />
                 </View>
-                <Text
-                  style={[
-                    styles.chartValue,
-                    { color: isDarkMode ? '#8E8E93' : '#666666' },
-                  ]}
-                >
+                <Text style={[styles.chartValue, { color: '#666666' }]}>
                   {item.count} distributions
                 </Text>
               </View>
@@ -323,18 +199,8 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
       </View>
 
       {/* Time Series */}
-      <View
-        style={[
-          styles.chartCard,
-          { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-        ]}
-      >
-        <Text
-          style={[
-            styles.cardTitle,
-            { color: isDarkMode ? '#FFFFFF' : '#000000' },
-          ]}
-        >
+      <View style={[styles.chartCard, { backgroundColor: '#FFFFFF' }]}>
+        <Text style={[styles.cardTitle, { color: '#000000' }]}>
           Distributions Over Time
         </Text>
         {loading ? (
@@ -342,33 +208,18 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
             {Array.from({ length: 5 }, (_, i) => (
               <View key={i} style={styles.loadingChartItem}>
                 <View
-                  style={[
-                    styles.loadingCircle,
-                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
-                  ]}
+                  style={[styles.loadingCircle, { backgroundColor: '#E5E5EA' }]}
                 />
                 <View
-                  style={[
-                    styles.loadingLine,
-                    { backgroundColor: isDarkMode ? '#2C2C2E' : '#E5E5EA' },
-                  ]}
+                  style={[styles.loadingLine, { backgroundColor: '#E5E5EA' }]}
                 />
               </View>
             ))}
           </View>
         ) : timeSeriesData.length === 0 ? (
           <View style={styles.emptyChart}>
-            <Icon
-              name="trending-up-outline"
-              size={48}
-              color={isDarkMode ? '#8E8E93' : '#C7C7CC'}
-            />
-            <Text
-              style={[
-                styles.emptyChartText,
-                { color: isDarkMode ? '#8E8E93' : '#666666' },
-              ]}
-            >
+            <Icon name="trending-up-outline" size={48} color={'#C7C7CC'} />
+            <Text style={[styles.emptyChartText, { color: '#666666' }]}>
               No data available
             </Text>
           </View>
@@ -376,12 +227,7 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
           <View style={styles.timeSeriesContainer}>
             {timeSeriesData.map((item, index) => (
               <View key={index} style={styles.timeSeriesItem}>
-                <Text
-                  style={[
-                    styles.timeSeriesDate,
-                    { color: isDarkMode ? '#8E8E93' : '#666666' },
-                  ]}
-                >
+                <Text style={[styles.timeSeriesDate, { color: '#666666' }]}>
                   {new Date(item.date).toLocaleDateString()}
                 </Text>
                 <View style={styles.timeSeriesBar}>
@@ -399,12 +245,7 @@ const ChartsPresentation: React.FC<ChartsPresentationProps> = ({
                     ]}
                   />
                 </View>
-                <Text
-                  style={[
-                    styles.timeSeriesValue,
-                    { color: isDarkMode ? '#FFFFFF' : '#000000' },
-                  ]}
-                >
+                <Text style={[styles.timeSeriesValue, { color: '#000000' }]}>
                   {item.count}
                 </Text>
               </View>
@@ -422,17 +263,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
   },
   summaryCard: {
     borderRadius: 12,

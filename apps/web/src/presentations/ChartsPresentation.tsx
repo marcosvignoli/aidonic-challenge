@@ -22,7 +22,7 @@ const ChartsPresentation: React.FC<ChartsContainerState> = ({
   error,
   refreshStats,
 }) => {
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+  const colors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   if (error) {
     return (
@@ -67,6 +67,51 @@ const ChartsPresentation: React.FC<ChartsContainerState> = ({
         <p className="text-gray-600">View distribution statistics and trends</p>
       </div>
 
+      {/* Summary Stats - Moved to top */}
+      <Card className="mb-8 p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+          Summary Statistics
+        </h2>
+        {loading ? (
+          <div className="grid grid-cols-3 gap-4 md:gap-6">
+            {Array.from({ length: 3 }, (_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                <div className="h-8 bg-gray-200 rounded"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-4 md:gap-6">
+            <div className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-blue-600 mb-2">
+                {chartData.reduce((sum, item) => sum + item.count, 0)}
+              </div>
+              <div className="text-sm md:text-base text-gray-600">
+                Total Distributions
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-green-600 mb-2">
+                {chartData.find((item) => item.status === "Completed")?.count ||
+                  0}
+              </div>
+              <div className="text-sm md:text-base text-gray-600">
+                Completed
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-yellow-600 mb-2">
+                {timeSeriesData.length}
+              </div>
+              <div className="text-sm md:text-base text-gray-600">
+                Active Days
+              </div>
+            </div>
+          </div>
+        )}
+      </Card>
+
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Pie Chart - Distributions by Status */}
@@ -100,7 +145,7 @@ const ChartsPresentation: React.FC<ChartsContainerState> = ({
                   {chartData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
+                      fill={colors[index % colors.length]}
                     />
                   ))}
                 </Pie>
@@ -160,45 +205,6 @@ const ChartsPresentation: React.FC<ChartsContainerState> = ({
           )}
         </Card>
       </div>
-
-      {/* Summary Stats */}
-      <Card className="mt-8 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">
-          Summary Statistics
-        </h2>
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {Array.from({ length: 3 }, (_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                <div className="h-8 bg-gray-200 rounded"></div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 mb-2">
-                {chartData.reduce((sum, item) => sum + item.count, 0)}
-              </div>
-              <div className="text-gray-600">Total Distributions</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">
-                {chartData.find((item) => item.status === "Completed")?.count ||
-                  0}
-              </div>
-              <div className="text-gray-600">Completed</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-yellow-600 mb-2">
-                {timeSeriesData.length}
-              </div>
-              <div className="text-gray-600">Active Days</div>
-            </div>
-          </div>
-        )}
-      </Card>
     </div>
   );
 };

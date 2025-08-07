@@ -1,4 +1,4 @@
-import React, { useId } from "react";
+import React, { forwardRef } from "react";
 import { colors } from "../design-tokens";
 
 export interface InputProps {
@@ -6,103 +6,140 @@ export interface InputProps {
   placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
-  disabled?: boolean;
-  error?: string;
-  className?: string;
-  label?: string;
-  id?: string;
-  name?: string;
-  required?: boolean;
-  autoComplete?: string;
-  ariaLabel?: string;
-  ariaDescribedBy?: string;
-  ariaInvalid?: boolean;
   onBlur?: () => void;
   onFocus?: () => void;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
+  error?: boolean;
+  success?: boolean;
+  loading?: boolean;
+  className?: string;
+  size?: "sm" | "md" | "lg";
+  fullWidth?: boolean;
+  required?: boolean;
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  autoComplete?: string;
+  autoFocus?: boolean;
+  maxLength?: number;
+  minLength?: number;
+  pattern?: string;
+  readOnly?: boolean;
+  tabIndex?: number;
 }
 
-export const Input: React.FC<InputProps> = ({
-  type = "text",
-  placeholder,
-  value = "",
-  onChange,
-  disabled = false,
-  error,
-  className = "",
-  label,
-  id,
-  name,
-  required = false,
-  autoComplete,
-  ariaLabel,
-  ariaDescribedBy,
-  ariaInvalid,
-  onBlur,
-  onFocus,
-  onKeyDown,
-}) => {
-  const generatedId = useId();
-  const inputId = id || generatedId;
-  const errorId = error ? `${inputId}-error` : undefined;
-  const describedBy = [ariaDescribedBy, errorId].filter(Boolean).join(" ");
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      type = "text",
+      placeholder,
+      value,
+      onChange,
+      onBlur,
+      onFocus,
+      disabled = false,
+      error = false,
+      success = false,
+      loading = false,
+      className = "",
+      size = "md",
+      fullWidth = true,
+      required = false,
+      ariaLabel,
+      ariaDescribedBy,
+      autoComplete,
+      autoFocus = false,
+      maxLength,
+      minLength,
+      pattern,
+      readOnly = false,
+      tabIndex,
+      ...props
+    },
+    ref
+  ) => {
+    const baseClasses = `border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors bg-[${colors.background.primary}]`;
 
-  const baseClasses =
-    "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors text-gray-900";
-  const errorClasses = error
-    ? `border-[${colors.error[500]}] focus:ring-[${colors.error[500]}]`
-    : `border-[${colors.border.primary}] focus:ring-[${colors.primary[500]}]`;
-  const disabledClasses = disabled
-    ? `bg-[${colors.background.secondary}] cursor-not-allowed opacity-50`
-    : `bg-[${colors.background.primary}] hover:border-[${colors.border.secondary}]`;
+    const sizeClasses = {
+      sm: "px-2 py-1 text-sm",
+      md: "px-3 py-2 text-base",
+      lg: "px-4 py-3 text-lg",
+    };
 
-  return (
-    <div className={className}>
-      {label && (
-        <label
-          htmlFor={inputId}
-          className={`block text-sm font-medium text-[${colors.text.primary}] mb-1`}
-        >
-          {label}
-          {required && (
-            <span
-              className={`text-[${colors.error[500]}] ml-1`}
-              aria-label="required"
+    const stateClasses = {
+      default: `border-[${colors.border.primary}] focus:ring-[${colors.primary[500]}]`,
+      error: `border-[${colors.border.error}] focus:ring-[${colors.error[500]}]`,
+      success: `border-[${colors.border.success}] focus:ring-[${colors.success[500]}]`,
+      disabled: `bg-[${colors.background.secondary}] cursor-not-allowed opacity-50`,
+    };
+
+    const widthClass = fullWidth ? "w-full" : "";
+
+    const getStateClass = () => {
+      if (disabled) return stateClasses.disabled;
+      if (error) return stateClasses.error;
+      if (success) return stateClasses.success;
+      return stateClasses.default;
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!disabled && !loading) {
+        onChange?.(e.target.value);
+      }
+    };
+
+    return (
+      <div className="relative">
+        <input
+          ref={ref}
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={handleChange}
+          onBlur={onBlur}
+          onFocus={onFocus}
+          disabled={disabled || loading}
+          required={required}
+          aria-label={ariaLabel}
+          aria-describedby={ariaDescribedBy}
+          aria-invalid={error}
+          autoComplete={autoComplete}
+          autoFocus={autoFocus}
+          maxLength={maxLength}
+          minLength={minLength}
+          pattern={pattern}
+          readOnly={readOnly}
+          tabIndex={tabIndex}
+          className={`${baseClasses} ${sizeClasses[size]} ${getStateClass()} ${widthClass} ${className}`}
+          {...props}
+        />
+        {loading && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+            <svg
+              className="animate-spin h-4 w-4 text-gray-400"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
             >
-              *
-            </span>
-          )}
-        </label>
-      )}
-      <input
-        id={inputId}
-        name={name}
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange?.(e.target.value)}
-        disabled={disabled}
-        required={required}
-        autoComplete={autoComplete}
-        aria-label={ariaLabel}
-        aria-describedby={describedBy || undefined}
-        aria-invalid={ariaInvalid !== undefined ? ariaInvalid : !!error}
-        aria-required={required}
-        onBlur={onBlur}
-        onFocus={onFocus}
-        onKeyDown={onKeyDown}
-        className={`${baseClasses} ${errorClasses} ${disabledClasses}`}
-      />
-      {error && (
-        <p
-          id={errorId}
-          className={`mt-1 text-sm text-[${colors.error[600]}]`}
-          role="alert"
-          aria-live="polite"
-        >
-          {error}
-        </p>
-      )}
-    </div>
-  );
-};
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          </div>
+        )}
+      </div>
+    );
+  }
+);
+
+Input.displayName = "Input";

@@ -1,10 +1,10 @@
 import React from "react";
-import { colors, componentTokens } from "../design-tokens";
+import { colors } from "../design-tokens";
 
 export interface ButtonProps {
   children: React.ReactNode;
-  variant?: "primary" | "secondary" | "outline" | "danger";
-  size?: "sm" | "md" | "lg";
+  variant?: "primary" | "secondary" | "outline" | "danger" | "ghost";
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
   disabled?: boolean;
   onClick?: () => void;
   className?: string;
@@ -14,6 +14,7 @@ export interface ButtonProps {
   loading?: boolean;
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
+  fullWidth?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -29,22 +30,28 @@ export const Button: React.FC<ButtonProps> = ({
   loading = false,
   icon,
   iconPosition = "left",
+  fullWidth = false,
 }) => {
   const baseClasses =
-    "font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2";
+    "font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
 
   const variantClasses = {
-    primary: `bg-[${colors.primary[600]}] text-white hover:bg-[${colors.primary[700]}] focus:ring-[${colors.primary[500]}]`,
-    secondary: `bg-[${colors.secondary[600]}] text-white hover:bg-[${colors.secondary[700]}] focus:ring-[${colors.secondary[500]}]`,
-    outline: `border border-[${colors.border.primary}] text-[${colors.text.primary}] hover:bg-[${colors.background.secondary}] focus:ring-[${colors.primary[500]}]`,
-    danger: `bg-[${colors.error[600]}] text-white hover:bg-[${colors.error[700]}] focus:ring-[${colors.error[500]}]`,
+    primary: `bg-[${colors.primary[600]}] text-white hover:bg-[${colors.primary[700]}] focus:ring-[${colors.primary[500]}] active:bg-[${colors.primary[800]}]`,
+    secondary: `bg-[${colors.secondary[600]}] text-white hover:bg-[${colors.secondary[700]}] focus:ring-[${colors.secondary[500]}] active:bg-[${colors.secondary[800]}]`,
+    outline: `border border-[${colors.border.primary}] text-[${colors.text.primary}] hover:bg-[${colors.background.secondary}] focus:ring-[${colors.primary[500]}] active:bg-[${colors.background.tertiary}]`,
+    danger: `bg-[${colors.error[600]}] text-white hover:bg-[${colors.error[700]}] focus:ring-[${colors.error[500]}] active:bg-[${colors.error[800]}]`,
+    ghost: `text-[${colors.text.primary}] hover:bg-[${colors.background.secondary}] focus:ring-[${colors.primary[500]}] active:bg-[${colors.background.tertiary}]`,
   };
 
   const sizeClasses = {
+    xs: "px-2 py-1 text-xs",
     sm: "px-3 py-1.5 text-sm",
     md: "px-4 py-2 text-base",
     lg: "px-6 py-3 text-lg",
+    xl: "px-8 py-4 text-xl",
   };
+
+  const widthClass = fullWidth ? "w-full" : "";
 
   const disabledClasses =
     disabled || loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer";
@@ -69,7 +76,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       type={type}
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className}`}
+      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${widthClass} ${className}`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       disabled={disabled || loading}

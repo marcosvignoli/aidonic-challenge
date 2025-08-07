@@ -1,45 +1,65 @@
 import React from "react";
-import { colors, borderRadius, typography } from "../design-tokens";
+import { colors } from "../design-tokens";
 
 export interface BadgeProps {
   children: React.ReactNode;
-  variant?:
-    | "primary"
-    | "secondary"
-    | "success"
-    | "warning"
-    | "error"
-    | "outline";
+  variant?: "default" | "success" | "warning" | "error" | "info";
   size?: "sm" | "md" | "lg";
   className?: string;
+  onClick?: () => void;
+  interactive?: boolean;
 }
 
 export const Badge: React.FC<BadgeProps> = ({
   children,
-  variant = "primary",
+  variant = "default",
   size = "md",
   className = "",
+  onClick,
+  interactive = false,
 }) => {
   const baseClasses = "inline-flex items-center font-medium rounded-full";
 
   const variantClasses = {
-    primary: `bg-[${colors.primary[100]}] text-[${colors.primary[800]}]`,
-    secondary: `bg-[${colors.secondary[100]}] text-[${colors.secondary[800]}]`,
-    success: `bg-[${colors.success[100]}] text-[${colors.success[800]}]`,
-    warning: `bg-[${colors.warning[100]}] text-[${colors.warning[800]}]`,
-    error: `bg-[${colors.error[100]}] text-[${colors.error[800]}]`,
-    outline: `border border-[${colors.border.primary}] text-[${colors.text.primary}] bg-[${colors.background.primary}]`,
+    default: `bg-[${colors.background.secondary}] text-[${colors.text.secondary}]`,
+    success: `bg-[${colors.success[100]}] text-[${colors.success[700]}]`,
+    warning: `bg-[${colors.warning[100]}] text-[${colors.warning[700]}]`,
+    error: `bg-[${colors.error[100]}] text-[${colors.error[700]}]`,
+    info: `bg-[${colors.primary[100]}] text-[${colors.primary[700]}]`,
   };
 
   const sizeClasses = {
-    sm: "px-2 py-0.5 text-xs",
-    md: "px-2.5 py-0.5 text-sm",
-    lg: "px-3 py-1 text-base",
+    sm: "px-1.5 py-0.5 text-xs",
+    md: "px-2 py-1 text-sm",
+    lg: "px-3 py-1.5 text-base",
+  };
+
+  const interactiveClasses = interactive
+    ? "cursor-pointer hover:opacity-80 transition-opacity"
+    : "";
+
+  const handleClick = (e: React.MouseEvent<HTMLSpanElement>) => {
+    if (interactive && onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (interactive && onClick && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      onClick();
+    }
   };
 
   return (
     <span
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${interactiveClasses} ${className}`}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-label={interactive ? "Badge" : undefined}
     >
       {children}
     </span>

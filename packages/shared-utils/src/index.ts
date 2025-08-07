@@ -34,11 +34,11 @@ export const isValidEmail = (email: string): boolean => {
 };
 
 export const isValidPhone = (phone: string): boolean => {
-  const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
+  const phoneRegex = /^\+?[\d\s\-()]{10,}$/;
   return phoneRegex.test(phone);
 };
 
-export const isRequired = (value: any): boolean => {
+export const isRequired = (value: unknown): boolean => {
   return value !== null && value !== undefined && value !== "";
 };
 
@@ -66,7 +66,7 @@ export const unique = <T>(array: T[]): T[] => {
 };
 
 // Object utilities
-export const pick = <T extends Record<string, any>, K extends keyof T>(
+export const pick = <T extends Record<string, unknown>, K extends keyof T>(
   obj: T,
   keys: K[]
 ): Pick<T, K> => {
@@ -79,7 +79,7 @@ export const pick = <T extends Record<string, any>, K extends keyof T>(
   return result;
 };
 
-export const omit = <T extends Record<string, any>, K extends keyof T>(
+export const omit = <T extends Record<string, unknown>, K extends keyof T>(
   obj: T,
   keys: K[]
 ): Omit<T, K> => {
