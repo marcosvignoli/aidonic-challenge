@@ -1,5 +1,17 @@
 # Aidonic Challenge - Aid Distribution Dashboard
 
+## Mobile Preview
+<img width="352" height="727" alt="image" src="https://github.com/user-attachments/assets/4ab2ba85-d7e9-40f2-999e-37b7051c46e8" />
+<img width="348" height="719" alt="image" src="https://github.com/user-attachments/assets/55af5366-b7b2-4076-b6ca-6b3b5fce2ceb" />
+<img width="354" height="722" alt="image" src="https://github.com/user-attachments/assets/6813555d-898f-4f9a-9424-41709ff56e38" />
+
+
+## Web Preview
+<img width="1906" height="1042" alt="image" src="https://github.com/user-attachments/assets/b9487f87-4f25-4dca-9424-b838d19efca9" />
+
+---
+
+
 A comprehensive Aid Distribution Dashboard with both Web (Next.js) and Mobile (React Native) interfaces, built using modern development practices and architectural patterns.
 
 ## 🚀 My Development Journey
